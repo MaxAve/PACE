@@ -1,9 +1,9 @@
 #include <board.h>
 
-void print_board(Board board, bool show_extra)
+void print_board(Board board)
 {
-    const char *piece_chars = "pPnNbBrRqQkK";
-    for(u8 i = 0; i < 64; ++i)
+    const char *piece_chars = "pnbrqkPNBRQK";
+    for(char i = 63; i >= 0; --i)
     {
         bool has_piece = false;
         for(u8 j = 0; j < 12; ++j)
@@ -18,7 +18,7 @@ void print_board(Board board, bool show_extra)
         {
             printf(". ");
         }
-        if((i + 1) % 8 == 0)
+        if((i) % 8 == 0)
         {
             printf("\n");
         }

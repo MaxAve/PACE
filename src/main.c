@@ -5,9 +5,8 @@
 
 int main(int argc, char** argv)
 {
-    Board b = {{0ULL, 0ULL, 0ULL, 0ULL, 0ULL, 0ULL, 0ULL, 0ULL, 0ULL, 0ULL, 0ULL, 0ULL}, 0};
-    PUT_PIECE(b, 1, 12);
-    print_board(b, false);
-    
+    Board b = STANDARD_BOARD;
+    PUT_PIECE(b, 7, 16);
+    print_board(b);
     return 0;
 }
