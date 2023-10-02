@@ -1,6 +1,6 @@
 #include <board.h>
 
-void print_board(Board board)
+void print_board(Board board, u64 mask)
 {
     const char *piece_chars = "pnbrqkPNBRQK";
     for(char i = 63; i >= 0; --i)
@@ -10,13 +10,20 @@ void print_board(Board board)
         {
             if(board.bitboards[j] & (1ULL << i))
             {
-                printf("%c ", piece_chars[j]);
+                printf("%c", piece_chars[j]);
                 has_piece = true;
             }
         }
         if(!has_piece)
         {
-            printf(". ");
+            printf(".");
+        }
+        if(mask & (1ULL << i))
+        {
+            printf("*");
+        }
+        else {
+            printf(" ");
         }
         if((i) % 8 == 0)
         {
