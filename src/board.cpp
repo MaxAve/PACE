@@ -1,4 +1,4 @@
-#include <board.h>
+#include "../include/board.h"
 
 void print_board(Board board, u64 mask)
 {
@@ -10,24 +10,24 @@ void print_board(Board board, u64 mask)
         {
             if(board.bitboards[j] & (1ULL << i))
             {
-                printf("%c", piece_chars[j]);
+                std::cout << piece_chars[j];
                 has_piece = true;
             }
         }
         if(!has_piece)
         {
-            printf(".");
+            std::cout << ".";
         }
         if(mask & (1ULL << i))
         {
-            printf("*");
+            std::cout << "*";
         }
         else {
-            printf(" ");
+            std::cout << " ";
         }
         if((i) % 8 == 0)
         {
-            printf("\n");
+            std::cout << "\n";
         }
     }
 }
