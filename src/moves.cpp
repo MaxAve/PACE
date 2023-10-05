@@ -24,7 +24,7 @@ u8 chess::moves::get_piece_type(chess::board::Board b, u8 square)
     return EMPTY_SQUARE;
 }
 
-u64 chess::moves::get_attack_bitboard(chess::board::Board b, u8 square, u8 piece_type, u64 enemy_bb, u64 friendly_bb)
+u64 chess::moves::get_attack_bitboard(chess::board::Board b, u8 square, u8 piece_type, u64 white_pieces_bb, u64 black_pieces_bb)
 {
     u64 attack_bb = 0ULL;
     switch(piece_type)
@@ -32,19 +32,69 @@ u64 chess::moves::get_attack_bitboard(chess::board::Board b, u8 square, u8 piece
         // Black pawn
         case PB:
         attack_bb |= (1ULL << (square-8));
-        if(square < 58 && square > 47 && !((enemy_bb | friendly_bb) & (1ULL << square-8)))
+        if(square < 58 && square > 47 && !((white_pieces_bb | black_pieces_bb) & (1ULL << square-8)))
             attack_bb |= (1ULL << (square-16));
-        attack_bb &= ~(enemy_bb | friendly_bb);
-        attack_bb |= (((1ULL << (square-7)) | (1ULL << (square-9))) & enemy_bb);
+        attack_bb &= ~(white_pieces_bb | black_pieces_bb);
+        attack_bb |= (((1ULL << (square-7)) | (1ULL << (square-9))) & white_pieces_bb);
         break;
 
         // White pawn
         case PW:
         attack_bb |= (1ULL << (square+8));
-        if(square < 16 && square > 7 && !((enemy_bb | friendly_bb) & (1ULL << square+8)))
+        if(square < 16 && square > 7 && !((white_pieces_bb | black_pieces_bb) & (1ULL << square+8)))
             attack_bb |= (1ULL << (square+16));
-        attack_bb &= ~(enemy_bb | friendly_bb);
-        attack_bb |= (((1ULL << (square+7)) | (1ULL << (square+9))) & enemy_bb);
+        attack_bb &= ~(white_pieces_bb | black_pieces_bb);
+        attack_bb |= (((1ULL << (square+7)) | (1ULL << (square+9))) & black_pieces_bb);
+        break;
+
+        // Black knight
+        case NB:
+        if((square % 8) < 7)
+        {
+            if (square < 48) attack_bb |= (1ULL << (square + 17));
+            if (square > 15) attack_bb |= (1ULL << (square - 15));
+            if((square % 8) < 6)
+            {
+                if (square < 56) attack_bb |= (1ULL << (square + 10));
+                if (square > 7) attack_bb |= (1ULL << (square - 6));
+            }
+        }
+        if((square % 8) > 0)
+        {
+            if (square < 48) attack_bb |= (1ULL << (square + 15));
+            if (square > 15) attack_bb |= (1ULL << (square - 17));
+            if((square % 8) > 1)
+            {
+                if (square < 56) attack_bb |= (1ULL << (square + 6));
+                if (square > 7) attack_bb |= (1ULL << (square - 10));
+            }
+        }
+        attack_bb &= ~black_pieces_bb;
+        break;
+
+        // White knight
+        case NW:
+        if((square % 8) < 7)
+        {
+            if (square < 48) attack_bb |= (1ULL << (square + 17));
+            if (square > 15) attack_bb |= (1ULL << (square - 15));
+            if((square % 8) < 6)
+            {
+                if (square < 56) attack_bb |= (1ULL << (square + 10));
+                if (square > 7) attack_bb |= (1ULL << (square - 6));
+            }
+        }
+        if((square % 8) > 0)
+        {
+            if (square < 48) attack_bb |= (1ULL << (square + 15));
+            if (square > 15) attack_bb |= (1ULL << (square - 17));
+            if((square % 8) > 1)
+            {
+                if (square < 56) attack_bb |= (1ULL << (square + 6));
+                if (square > 7) attack_bb |= (1ULL << (square - 10));
+            }
+        }
+        attack_bb &= ~white_pieces_bb;
         break;
     }
     return attack_bb;
