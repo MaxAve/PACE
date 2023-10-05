@@ -1,6 +1,6 @@
 #include "../include/board.h"
 
-void print_board(Board board, u64 mask)
+void chess::board::print_board(chess::board::Board board, u64 mask)
 {
     const char *piece_chars = "pnbrqkPNBRQK";
     for(char i = 63; i >= 0; --i)
