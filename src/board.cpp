@@ -14,17 +14,15 @@ void chess::board::print_board(chess::board::Board board, u64 mask)
                 has_piece = true;
             }
         }
-        if(!has_piece)
-        {
-            std::cout << ".";
-        }
-        if(mask & (1ULL << i))
-        {
-            std::cout << "*";
-        }
-        else {
+        // bruh
+        if(!has_piece && !(mask & (1ULL << i)))
+            std::cout << ". ";
+        if(!has_piece && (mask & (1ULL << i)))
+            std::cout << "* ";
+        if(has_piece && !(mask & (1ULL << i)))
             std::cout << " ";
-        }
+        if(has_piece && (mask & (1ULL << i)))
+            std::cout << "*";
         if((i) % 8 == 0)
         {
             std::cout << "\n";
