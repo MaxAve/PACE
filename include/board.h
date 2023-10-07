@@ -8,6 +8,7 @@
 
 #define PUT_PIECE(board, piece, square)(board.bitboards[piece] |= (1ULL << square)) /** Places a piece on a board @param board A Board struct to be modified @param piece the piece ID (0-11) @param square the square where the new piece should be placed at (0-63) */
 
+#define PIECE_BB(board)(board.bitboards[0] | board.bitboards[1] | board.bitboards[2] | board.bitboards[3] | board.bitboards[4] | board.bitboards[5] | board.bitboards[6] | board.bitboards[7] | board.bitboards[8] | board.bitboards[9] | board.bitboards[10] | board.bitboards[11])
 #define BLACK_PIECE_BB(board)(board.bitboards[0] | board.bitboards[1] | board.bitboards[2] | board.bitboards[3] | board.bitboards[4] | board.bitboards[5])
 #define WHITE_PIECE_BB(board)(board.bitboards[6] | board.bitboards[7] | board.bitboards[8] | board.bitboards[9] | board.bitboards[10] | board.bitboards[11])
 
