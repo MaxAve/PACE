@@ -6,8 +6,9 @@ PACE is my second attempt at making a chess engine. My first attempt (repo is Ma
 ```
 git clone https://github.com/MaxAve/PACE.git
 ```
-**Step 2**: Use the Makefile to compile the source code
+**Step 2**: ```cd``` into the project and use the Makefile to compile the source code
 ```
+cd PACE
 make
 ```
 If you're on Windows and the above command doesn't work, you can also use
