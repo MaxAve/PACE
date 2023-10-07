@@ -4,7 +4,7 @@ PACE is my second attempt at making a chess engine. My first attempt (repo is Ma
 ### Getting started ###
 **Step 1**: Clone the repo
 ```
-git clone blah
+git clone https://github.com/MaxAve/PACE.git
 ```
 **Step 2**: Use the Makefile to compile the source code
 ```
