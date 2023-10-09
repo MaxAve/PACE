@@ -25,7 +25,7 @@ u8 chess::moves::get_piece_type(chess::board::Board b, u8 square)
 }
 
 // TODO this needs optimization if possible
-u64 chess::moves::get_attack_bitboard(chess::board::Board b, u8 square, u8 piece_type, u64 white_pieces_bb, u64 black_pieces_bb, u64 all_pieces_bb)
+u64 chess::moves::get_attack_bitboard(const chess::board::Board &b, u8 square, u8 piece_type, u64 white_pieces_bb, u64 black_pieces_bb, u64 all_pieces_bb)
 {
     u64 attack_bb = 0ULL;
     switch(piece_type)

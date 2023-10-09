@@ -29,6 +29,6 @@ namespace chess
          * @param all_pieces_bb precomputed bitmask of all pieces
          * @return u64 (unsigned long long)
          */
-        u64 get_attack_bitboard(chess::board::Board b, u8 square, u8 piece_type, u64 white_pieces_bb, u64 black_pieces_bb, u64 all_pieces_bb);
+        u64 get_attack_bitboard(const chess::board::Board &b, u8 square, u8 piece_type, u64 white_pieces_bb, u64 black_pieces_bb, u64 all_pieces_bb);
     }
 }

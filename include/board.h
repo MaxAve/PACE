@@ -23,6 +23,6 @@ namespace chess
         } Board;
 
         /** Displays a board in the terminal @param board the board to be displayed @param mask bitmask which determines which squares should be marked. Used for debugging attack bitboards */
-        void print_board(Board board, u64 mask);
+        void print_board(chess::board::Board board, u64 mask=0ULL);
     }
 }
