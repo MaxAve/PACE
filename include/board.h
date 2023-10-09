@@ -14,15 +14,15 @@
 
 namespace chess
 {
-namespace board
-{
-typedef struct
-{
-    u64 bitboards[12]; // Contains 12 bitboards each for every piece type
-    u8 flags;          // Contains flags like castling rights
-} Board;
+    namespace board
+    {
+        typedef struct
+        {
+            u64 bitboards[12]; // Contains 12 bitboards each for every piece type
+            u8 flags;          // Contains flags like castling rights
+        } Board;
 
-/** Displays a board in the terminal @param board the board to be displayed @param mask bitmask which determines which squares should be marked. Used for debugging attack bitboards */
-void print_board(Board board, u64 mask);
-}
+        /** Displays a board in the terminal @param board the board to be displayed @param mask bitmask which determines which squares should be marked. Used for debugging attack bitboards */
+        void print_board(Board board, u64 mask);
+    }
 }

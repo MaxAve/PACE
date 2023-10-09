@@ -375,6 +375,40 @@ u64 chess::moves::get_attack_bitboard(chess::board::Board b, u8 square, u8 piece
         }
         attack_bb &= ~white_pieces_bb;
         break;
+
+        // Black king
+        case KB:
+        attack_bb |= (1ULL << (square + 1) & chess::moves::no_h_file);
+        attack_bb |= (1ULL << (square - 1) & chess::moves::no_a_file);
+        if(square > 7) {
+            attack_bb |= (1ULL << (square - 8) & chess::moves::no_1_rank);
+            attack_bb |= ((1ULL << (square - 9) & chess::moves::no_a_file) & chess::moves::no_1_rank);
+            attack_bb |= ((1ULL << (square - 7) & chess::moves::no_h_file) & chess::moves::no_1_rank);
+        }
+        if(square < 56) {
+            attack_bb |= ((1ULL << (square + 9) & chess::moves::no_h_file) & chess::moves::no_8_rank);
+            attack_bb |= (1ULL << (square + 8) & chess::moves::no_8_rank);
+            attack_bb |= ((1ULL << (square + 7) & chess::moves::no_a_file) & chess::moves::no_8_rank);
+        }
+        attack_bb &= ~black_pieces_bb;
+        break;
+
+        // White king
+        case KW:
+        attack_bb |= (1ULL << (square + 1) & chess::moves::no_h_file);
+        attack_bb |= (1ULL << (square - 1) & chess::moves::no_a_file);
+        if(square > 7) {
+            attack_bb |= (1ULL << (square - 8) & chess::moves::no_1_rank);
+            attack_bb |= ((1ULL << (square - 9) & chess::moves::no_a_file) & chess::moves::no_1_rank);
+            attack_bb |= ((1ULL << (square - 7) & chess::moves::no_h_file) & chess::moves::no_1_rank);
+        }
+        if(square < 56) {
+            attack_bb |= ((1ULL << (square + 9) & chess::moves::no_h_file) & chess::moves::no_8_rank);
+            attack_bb |= (1ULL << (square + 8) & chess::moves::no_8_rank);
+            attack_bb |= ((1ULL << (square + 7) & chess::moves::no_a_file) & chess::moves::no_8_rank);
+        }
+        attack_bb &= ~white_pieces_bb;
+        break;
     }
     return attack_bb;
 }
