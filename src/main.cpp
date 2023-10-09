@@ -9,14 +9,21 @@ using namespace chess::moves;
 
 int main(int argc, char** argv)
 {
-    // This is a demo of some of the newly added features
+    /*
+    This is a demo of some of the newly added features
+    */
 
-    Board b = EMPTY_BOARD;
+    Board b = EMPTY_BOARD; // Board
+
     u64 attack_bb = 0ULL;
-    u8 pos = 36;
-    PUT_PIECE(b, BB, pos);
-    attack_bb = get_attack_bitboard(b, pos, BB, WHITE_PIECE_BB(b), BLACK_PIECE_BB(b), PIECE_BB(b));
-    print_board(b, attack_bb);
+
+    u8 pos = 36; // Piece's square
+    u8 piece_type = QW; // Piece's type
+
+    PUT_PIECE(b, piece_type, pos);
+    attack_bb = get_attack_bitboard(b, pos, piece_type, WHITE_PIECE_BB(b), BLACK_PIECE_BB(b), PIECE_BB(b)); // Set attack_bb to the attack bitboard of the piece
+
+    print_board(b, attack_bb); // Print board
 
     return 0;
 }

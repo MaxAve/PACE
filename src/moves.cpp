@@ -242,8 +242,138 @@ u64 chess::moves::get_attack_bitboard(chess::board::Board b, u8 square, u8 piece
         attack_bb &= ~white_pieces_bb;
         break;
 
-        default:
-        return 0ULL;
+        // Black queen
+        case QB:
+        // North-west
+        if((square % 8) != 7 && square < 56) {
+            for(u8 i = square+9; i < 64; i += 9) {
+                attack_bb |= (1ULL << i);
+                if(all_pieces_bb & (1ULL << i) || (i % 8) == 7 || i > 55)
+                    break;
+            }
+        }
+        // North-east (from white's POV)
+        if((square % 8) != 0 && square < 56) {
+            for(u8 i = square+7; i < 63; i += 7) {
+                attack_bb |= (1ULL << i);
+                if(all_pieces_bb & (1ULL << i) || (i % 8) == 0 || i > 55)
+                    break;
+            }
+        }
+        // South-east (from white's POV)
+        if((square % 8) != 0 && square > 7) {
+            for(u8 i = square-9; i < 63; i -= 9) {
+                attack_bb |= (1ULL << i);
+                if(all_pieces_bb & (1ULL << i) || (i % 8) == 0 || i < 8)
+                    break;
+            }
+        }
+        // South-west (from white's POV)
+        if((square % 8) != 7 && square > 7) {
+            for(u8 i = square-7; i < 63; i -= 7) {
+                attack_bb |= (1ULL << i);
+                if(all_pieces_bb & (1ULL << i) || (i % 8) == 7 || i < 8)
+                    break;
+            }
+        }
+        // Right (from white's POV)
+        if(square > 0) {
+            for(u8 i = square - 1; i >= (square - (square % 8)); --i) {
+                attack_bb |= (1ULL << i);
+                if(all_pieces_bb & (1ULL << i))
+                    break;
+                if(i == 0)
+                    break;
+            }
+        }
+        // Left (from white's POV)
+        for(u8 i = square + 1; i < (square + (8 - (square % 8))); ++i) {
+            attack_bb |= (1ULL << i);
+            if(all_pieces_bb & (1ULL << i))
+                break;
+        }
+        // Up (from white's POV)
+        for(u8 i = square + 8; i < 64; i += 8) {
+            attack_bb |= (1ULL << i);
+            if(all_pieces_bb & (1ULL << i))
+                break;
+        }
+        // Down (from white's POV)
+        if(square > 7) {
+            for(u8 i = square - 8; i >= 0; i -= 8) {
+                attack_bb |= (1ULL << i);
+                if(all_pieces_bb & (1ULL << i))
+                    break;
+            }
+        }
+        attack_bb &= ~black_pieces_bb;
+        break;
+
+        // White queen
+        case QW:
+        // North-west
+        if((square % 8) != 7 && square < 56) {
+            for(u8 i = square+9; i < 64; i += 9) {
+                attack_bb |= (1ULL << i);
+                if(all_pieces_bb & (1ULL << i) || (i % 8) == 7 || i > 55)
+                    break;
+            }
+        }
+        // North-east (from white's POV)
+        if((square % 8) != 0 && square < 56) {
+            for(u8 i = square+7; i < 63; i += 7) {
+                attack_bb |= (1ULL << i);
+                if(all_pieces_bb & (1ULL << i) || (i % 8) == 0 || i > 55)
+                    break;
+            }
+        }
+        // South-east (from white's POV)
+        if((square % 8) != 0 && square > 7) {
+            for(u8 i = square-9; i < 63; i -= 9) {
+                attack_bb |= (1ULL << i);
+                if(all_pieces_bb & (1ULL << i) || (i % 8) == 0 || i < 8)
+                    break;
+            }
+        }
+        // South-west (from white's POV)
+        if((square % 8) != 7 && square > 7) {
+            for(u8 i = square-7; i < 63; i -= 7) {
+                attack_bb |= (1ULL << i);
+                if(all_pieces_bb & (1ULL << i) || (i % 8) == 7 || i < 8)
+                    break;
+            }
+        }
+        // Right (from white's POV)
+        if(square > 0) {
+            for(u8 i = square - 1; i >= (square - (square % 8)); --i) {
+                attack_bb |= (1ULL << i);
+                if(all_pieces_bb & (1ULL << i))
+                    break;
+                if(i == 0)
+                    break;
+            }
+        }
+        // Left (from white's POV)
+        for(u8 i = square + 1; i < (square + (8 - (square % 8))); ++i) {
+            attack_bb |= (1ULL << i);
+            if(all_pieces_bb & (1ULL << i))
+                break;
+        }
+        // Up (from white's POV)
+        for(u8 i = square + 8; i < 64; i += 8) {
+            attack_bb |= (1ULL << i);
+            if(all_pieces_bb & (1ULL << i))
+                break;
+        }
+        // Down (from white's POV)
+        if(square > 7) {
+            for(u8 i = square - 8; i >= 0; i -= 8) {
+                attack_bb |= (1ULL << i);
+                if(all_pieces_bb & (1ULL << i))
+                    break;
+            }
+        }
+        attack_bb &= ~white_pieces_bb;
         break;
     }
     return attack_bb;
