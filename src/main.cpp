@@ -17,7 +17,7 @@ int main(int argc, char** argv)
 
     Board b = STANDARD_BOARD; // Standard board setupa
 
-    print_board(b); // Print board
+    print_board(b, get_attack_bitboard(NW, WHITE_PIECE_BB(b), BLACK_PIECE_BB(b), PIECE_BB(b), 1)); // Print board
 
     std::cout << "\nEvaluation: " << count_material(b);
 

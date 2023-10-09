@@ -1,6 +1,6 @@
 #include "../include/moves.h"
 
-bool chess::moves::get_piece_color(chess::board::Board b, u8 square)
+bool chess::moves::get_piece_color(const chess::board::Board &b, u8 square)
 {
     for(int i = 0; i < 6; ++i)
     {
@@ -12,7 +12,7 @@ bool chess::moves::get_piece_color(chess::board::Board b, u8 square)
     return WHITE;
 }
 
-u8 chess::moves::get_piece_type(chess::board::Board b, u8 square)
+u8 chess::moves::get_piece_type(const chess::board::Board &b, u8 square)
 {
     for(u8 i = 0; i < 12; ++i)
     {
@@ -25,7 +25,7 @@ u8 chess::moves::get_piece_type(chess::board::Board b, u8 square)
 }
 
 // TODO this needs optimization if possible
-u64 chess::moves::get_attack_bitboard(const chess::board::Board &b, u8 square, u8 piece_type, u64 white_pieces_bb, u64 black_pieces_bb, u64 all_pieces_bb)
+u64 chess::moves::get_attack_bitboard(u8 piece_type, u64 white_pieces_bb, u64 black_pieces_bb, u64 all_pieces_bb, u8 square)
 {
     u64 attack_bb = 0ULL;
     switch(piece_type)
