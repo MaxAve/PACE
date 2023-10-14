@@ -17,13 +17,13 @@ using namespace chess::uci;
 void cpu_vs_cpu(Board &b)
 {
     print_board(b); // Print board
-    std::cout << "\n";
+    std::cout << "\nPosition evaluation: -\nPositions analyzed: -\n";
 
-    bool max = true; // This variable is used to control who's turn it is
-    while(true)
+    bool white_turn = true; // This variable is used to control who's turn it is
+    while(b.bitboards[KW] && b.bitboards[KB])
     {
         positions_analyzed = 0; // Set counter for positions analyzed to 0
-        Eval evaluation = minimax(b, max, INT_MIN, INT_MAX, 6); // Evaluate the position and find the best move
+        Eval evaluation = minimax(b, white_turn, INT_MIN, INT_MAX, 8); // Evaluate the position and find the best move
 
         // Modify main board to reflect the move
         for(int i = 0; i < 12; ++i)
@@ -32,7 +32,7 @@ void cpu_vs_cpu(Board &b)
         b.bitboards[evaluation.promotion_piece] = evaluation.promotion_bitboard;
 
         print_board(b); // Print board
-        max = !max; // Turn swap
+        white_turn = !white_turn; // Turn swap
 
         // Display position analysis and number of positions analyzed
         std::cout << "\nPosition evaluation: " << evaluation.eval << "\n";
@@ -42,7 +42,7 @@ void cpu_vs_cpu(Board &b)
 
 int main(int argc, char** argv)
 {
-    Board b = STANDARD_BOARD; // Main board
+    Board b = fen_to_board("8/1k6/8/4Q3/3K4/8/8/8"); // Basic mate in 4 in Queen + King vs King endgame
     cpu_vs_cpu(b); // Start a game with the engine playing against itself
 
     return 0;

@@ -7,11 +7,16 @@ chess::search::Eval chess::search::minimax(const chess::board::Board &b, bool ma
     positions_analyzed++;
     chess::search::Eval position_eval;
     
-    if(depth == 0) {
-        position_eval.eval = chess::eval::eval_pst(b);
+    if(!b.bitboards[KW]) {
+        position_eval.eval = -1000000000 - depth;
         return position_eval;
-    }
-    else {
+    } else if(!b.bitboards[KB]) {
+        position_eval.eval = 1000000000 + depth;
+        return position_eval;
+    } else if(depth == 0) {
+        position_eval.eval = chess::eval::eval_pst(b); // TODO improve evaluation
+        return position_eval;
+    } else {
         if(maximizing)
         {
             position_eval = {INT_MIN, 0, 0ULL};
