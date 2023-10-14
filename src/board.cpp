@@ -2,7 +2,7 @@
 
 void chess::board::print_board(chess::board::Board board, u64 mask)
 {
-    const char *piece_chars = "pnbrqkPNBRQK";
+    std::string piece_chars = "pnbrqkPNBRQK";
     for(char i = 63; i >= 0; --i)
     {
         bool has_piece = false;
