@@ -27,7 +27,7 @@ What needs to be done
 - Implement board representation (**DONE**)
 - Implement basic attack bitboards for piece legal moves (**DONE**)
 - Implement special moves like castling & en pessant
-- Implement an evaluation function (*CURRENTLY WORKING ON*)
+- Implement an evaluation function
 - Implement a minimax function (**DONE**)
-- Implement opening book
-- Optimize minimax function (*CURRENTLY WORKING ON*)
+- Implement opening book (*CURRENTLY WORKING ON*)
+- Optimize minimax function

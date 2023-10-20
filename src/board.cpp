@@ -1,6 +1,6 @@
 #include "../include/board.h"
 
-void chess::board::print_board(chess::board::Board board, u64 mask)
+void chess::board::print_board(chess::board::Board board, bool display_flags, u64 mask)
 {
     std::string piece_chars = "pnbrqkPNBRQK";
     for(char i = 63; i >= 0; --i)
@@ -28,4 +28,10 @@ void chess::board::print_board(chess::board::Board board, u64 mask)
             std::cout << "\n";
         }
     }
+    std::cout << "Flags: ";
+    for(int i = 4; i >= 0; --i)
+    {
+        std::cout << ((board.flags & (1ULL << i)) ? '1' : '0');
+    }
+    std::cout << "\n";
 }
