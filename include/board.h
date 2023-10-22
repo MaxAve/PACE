@@ -2,6 +2,7 @@
 
 #include "types.h"
 #include <iostream>
+#include <unordered_map>
 
 #define WHITE_TURN         0b00010000
 #define WHITE_SHORT_CASTLE 0b00001000
@@ -27,6 +28,46 @@ namespace chess
             u64 bitboards[12]; // Contains 12 bitboards each for every piece type
             u8 flags;          // Contains flags like castling rights and current turn
         } Board;
+
+        struct BoardHash {
+            std::size_t operator()(const Board &b) const {
+                std::size_t hash = 17;
+                hash = hash * 31 + std::hash<u8>{}(b.flags);
+                hash = hash * 31 + std::hash<u64>{}(b.bitboards[0]);
+                hash = hash * 31 + std::hash<u64>{}(b.bitboards[1]);
+                hash = hash * 31 + std::hash<u64>{}(b.bitboards[2]);
+                hash = hash * 31 + std::hash<u64>{}(b.bitboards[3]);
+                hash = hash * 31 + std::hash<u64>{}(b.bitboards[4]);
+                hash = hash * 31 + std::hash<u64>{}(b.bitboards[5]);
+                hash = hash * 31 + std::hash<u64>{}(b.bitboards[6]);
+                hash = hash * 31 + std::hash<u64>{}(b.bitboards[7]);
+                hash = hash * 31 + std::hash<u64>{}(b.bitboards[8]);
+                hash = hash * 31 + std::hash<u64>{}(b.bitboards[9]);
+                hash = hash * 31 + std::hash<u64>{}(b.bitboards[10]);
+                hash = hash * 31 + std::hash<u64>{}(b.bitboards[11]);
+                return hash;
+            }
+        };
+
+        struct BoardEqual {
+            bool operator()(const Board &a, const Board &b) const {
+                return (
+                        a.bitboards[0] == b.bitboards[0] &&
+                        a.bitboards[6] == b.bitboards[6] &&
+                        a.bitboards[1] == b.bitboards[1] &&
+                        a.bitboards[7] == b.bitboards[7] &&
+                        a.bitboards[2] == b.bitboards[2] &&
+                        a.bitboards[8] == b.bitboards[8] &&
+                        a.bitboards[3] == b.bitboards[3] &&
+                        a.bitboards[9] == b.bitboards[9] &&
+                        a.bitboards[4] == b.bitboards[4] &&
+                        a.bitboards[10] == b.bitboards[10] &&
+                        a.bitboards[5] == b.bitboards[5] &&
+                        a.bitboards[11] == b.bitboards[11] &&
+                        a.flags == b.flags
+                );
+            }
+        };
 
         /** Displays a board in the terminal @param board the board to be displayed @param mask bitmask which determines which squares should be marked. Used for debugging attack bitboards */
         void print_board(chess::board::Board board, bool display_flags=false, u64 mask=0ULL);

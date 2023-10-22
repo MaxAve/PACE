@@ -12,6 +12,12 @@ namespace chess
         const u64 no_1_rank = 0xffffffffffffff00; // ~0x00000000000000ff
         const u64 no_8_rank = 0x00ffffffffffffff; // ~0xff00000000000000
 
+        typedef struct
+        {
+            u8 from;
+            u8 to;
+        } Move;
+
         /* Returns the piece color of a piece at a given square */
         bool get_piece_color(const board::Board &b, u8 square);
 

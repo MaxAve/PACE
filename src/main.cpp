@@ -62,8 +62,20 @@ void cpu_vs_cpu(Board &b, u8 depth)
 
 int main(int argc, char** argv)
 {
-    Board board = fen_to_board("8/1k6/8/4Q3/3K4/8/8/8 w - - 0 1"); // Basic mate in 4 in Queen + King vs King endgame
-    cpu_vs_cpu(board, 8); // Start a game with the engine playing against itself
+    //Board board = STANDARD_BOARD; // Basic mate in 4 in Queen + King vs King endgame
+    //cpu_vs_cpu(board, 6); // Start a game with the engine playing against itself
+
+    Board b = STANDARD_BOARD;
+    Board b2 = EMPTY_BOARD;
+    Eval e = {234, 12, 23, 3, 5};
+    Eval e2 = {69, 120, 420, 120, 1};
+
+    std::unordered_map<Board, Eval, BoardHash, BoardEqual> m;
+
+    m[b] = e2;
+    m[b2] = e;
+
+    std::cout << m[b2].eval;
 
     return 0;
 }
