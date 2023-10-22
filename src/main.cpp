@@ -27,11 +27,10 @@ void cpu_vs_cpu(Board &b, u8 depth)
     print_board(b, true); // Print board
     std::cout << "\nPosition evaluation: -\nPositions analyzed: -\n";
 
-    bool p1_turn = true; // This variable is used to control who's turn it is (p1_turn == true means that it's white's turn)
     while(b.bitboards[KW] && b.bitboards[KB])
     {
         positions_analyzed = 0; // Set counter for positions analyzed to 0
-        Eval evaluation = minimax(b, p1_turn, INT_MIN, INT_MAX, depth); // Evaluate the position and find the best move
+        Eval evaluation = minimax(b, b.flags & (1ULL << 4), INT_MIN, INT_MAX, depth); // Evaluate the position and find the best move
 
         // Modify main board to reflect the move
         for(int i = 0; i < 12; ++i)
@@ -40,7 +39,7 @@ void cpu_vs_cpu(Board &b, u8 depth)
         b.bitboards[evaluation.promotion_piece] = evaluation.promotion_bitboard; // Promotion (if a pawn reaches the opposite end of board)
 
         print_board(b, true); // Print board
-        p1_turn = !p1_turn; // Turn swap
+        b.flags ^= (1ULL << 4); // Switch turns
 
         // Display position analysis and number of positions analyzed
         if(std::abs(evaluation.eval) < 1000000000)
@@ -62,8 +61,8 @@ void cpu_vs_cpu(Board &b, u8 depth)
 
 int main(int argc, char** argv)
 {
-    //Board board = STANDARD_BOARD; // Basic mate in 4 in Queen + King vs King endgame
-    //cpu_vs_cpu(board, 6); // Start a game with the engine playing against itself
+    Board board = STANDARD_BOARD; // Basic mate in 4 in Queen + King vs King endgame
+    cpu_vs_cpu(board, 6); // Start a game with the engine playing against itself
 
     Board b = STANDARD_BOARD;
     Board b2 = EMPTY_BOARD;
