@@ -7,27 +7,24 @@ This is going to be my second attempt at making a chess engine. My first attempt
 ```
 git clone https://github.com/MaxAve/PACE.git
 ```
-**Step 2**: ```cd``` into the project and use the Makefile to compile the source code
+**Step 2**: ```cd``` into the project and use the Makefile to compile the source code:
 ```
 cd PACE
 ```
 ```
 make
 ```
-If you're on Windows and ```make``` doesn't work for you, you can also try
+If you're on Windows and ```make``` doesn't work for you, you can also try:
 ```
 mingw32-make
 ```
-**Step 3**: Run the project
+**Step 3**: Run the project:
 ```
 ./PACE
 ```
 ### Tasks ###
-What needs to be done
-- Implement board representation (**DONE**)
-- Implement basic attack bitboards for piece legal moves (**DONE**)
-- Implement special moves like castling & en pessant
-- Implement an evaluation function
-- Implement a minimax function (**DONE**)
-- Implement opening book (*CURRENTLY WORKING ON*)
+Things that are yet to be done
+- Implement special moves like castling & en passant
+- Implement a proper evaluation function
+- Implement an opening book
 - Optimize minimax function
