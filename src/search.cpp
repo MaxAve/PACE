@@ -1,6 +1,30 @@
 #include "../include/search.h"
 
+std::unordered_map<chess::board::Board, chess::search::EvalAge, chess::board::BoardHash, chess::board::BoardEqual> chess::search::lookup_table;
+
 u64 chess::search::positions_analyzed = 0ULL;
+
+void chess::search::add_to_lookup(chess::board::Board board, chess::search::Eval eval)
+{
+    chess::search::lookup_table[board] = {eval, 0};
+}
+
+void chess::search::update_lookup(u8 elem_deletion_age)
+{
+    // Incerement all entries' age and add aged ones to the deletion list
+    std::vector<chess::board::Board> to_delete;
+    for(auto& elem : chess::search::lookup_table)
+    {
+        if(elem.second.age >= elem_deletion_age-1)
+            to_delete.push_back(elem.first);
+        elem.second.age++;
+    }
+    // Delete old entries
+    for(auto& key : to_delete)
+    {
+        chess::search::lookup_table.erase(key);
+    }
+}
 
 chess::search::Eval chess::search::minimax(const chess::board::Board &b, bool maximizing, int alpha, int beta, u8 depth)
 {

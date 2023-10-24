@@ -61,20 +61,30 @@ void cpu_vs_cpu(Board &b, u8 depth)
 
 int main(int argc, char** argv)
 {
-    Board board = STANDARD_BOARD; // Basic mate in 4 in Queen + King vs King endgame
-    cpu_vs_cpu(board, 6); // Start a game with the engine playing against itself
+    //Board board = STANDARD_BOARD; // Basic mate in 4 in Queen + King vs King endgame
+    //cpu_vs_cpu(board, 6); // Start a game with the engine playing against itself
 
-    Board b = STANDARD_BOARD;
+    Board b0 = STANDARD_BOARD;
+    Board b1 = EMPTY_BOARD;
     Board b2 = EMPTY_BOARD;
-    Eval e = {234, 12, 23, 3, 5};
-    Eval e2 = {69, 120, 420, 120, 1};
+    b2.flags = 4;
 
-    std::unordered_map<Board, Eval, BoardHash, BoardEqual> m;
+    add_to_lookup(b0, {100, 3, 543354543, 0, 0});
+    add_to_lookup(b1, {-450, 3, 785438954300009895, 10, 4535435430});
 
-    m[b] = e2;
-    m[b2] = e;
+    update_lookup(5);
+    update_lookup(5);
+    update_lookup(5);
 
-    std::cout << m[b2].eval;
+    add_to_lookup(b2, {120, 1, 54343, 0, 0});
+    
+    update_lookup(5);
+    update_lookup(5);
+
+    for(auto& elem : lookup_table)
+    {
+        std::cout << (int)elem.first.flags << " - " << elem.second.eval.eval << " (" << (int)elem.second.age << ")\n";
+    }
 
     return 0;
 }
