@@ -16,14 +16,12 @@ using namespace chess::eval;
 using namespace chess::search;
 using namespace chess::uci;
 
-/**
- * @brief Makes the engine play out the given position against itself
- * 
- * @param b position to play
- * @param depth search depth for the engine
- */
-void cpu_vs_cpu(Board &b, u8 depth)
+bool clear_screen = true;
+
+void cpu_vs_cpu(Board &b, u8 depth, u64 max_transposition_table_size)
 {
+    if(clear_screen)
+        system("cls");
     print_board(b, true); // Print board
     std::cout << "\nPosition evaluation: -\nPositions analyzed: -\n";
 
@@ -37,6 +35,9 @@ void cpu_vs_cpu(Board &b, u8 depth)
             b.bitboards[i] &= ~evaluation.new_bitboard; // Capture any pieces on the target square
         b.bitboards[evaluation.piece_to_move] = evaluation.new_bitboard; // Move piece
         b.bitboards[evaluation.promotion_piece] = evaluation.promotion_bitboard; // Promotion (if a pawn reaches the opposite end of board)
+
+        if(clear_screen)
+            system("cls");
 
         print_board(b, true); // Print board
         b.flags ^= (1ULL << 4); // Switch turns
@@ -56,35 +57,19 @@ void cpu_vs_cpu(Board &b, u8 depth)
             std::cout << "Positions analyzed: " << positions_analyzed << " (~" << std::round((float)positions_analyzed/1000000) << " Million)\n";
         else
             std::cout << "Positions analyzed: " << positions_analyzed << " (< 1 Million)\n";
+
+        std::cout << "\nUpdating transposition table...\n";
+
+        update_transposition_table(max_transposition_table_size);
+
+        std::cout << "Done! (" << transposition_table.size() << " entries updated)\n";
     }
 }
 
 int main(int argc, char** argv)
 {
-    //Board board = STANDARD_BOARD; // Basic mate in 4 in Queen + King vs King endgame
-    //cpu_vs_cpu(board, 6); // Start a game with the engine playing against itself
-
-    Board b0 = STANDARD_BOARD;
-    Board b1 = EMPTY_BOARD;
-    Board b2 = EMPTY_BOARD;
-    b2.flags = 4;
-
-    add_to_lookup(b0, {100, 3, 543354543, 0, 0});
-    add_to_lookup(b1, {-450, 3, 785438954300009895, 10, 4535435430});
-
-    update_lookup(5);
-    update_lookup(5);
-    update_lookup(5);
-
-    add_to_lookup(b2, {120, 1, 54343, 0, 0});
-    
-    update_lookup(5);
-    update_lookup(5);
-
-    for(auto& elem : lookup_table)
-    {
-        std::cout << (int)elem.first.flags << " - " << elem.second.eval.eval << " (" << (int)elem.second.age << ")\n";
-    }
+    Board board = fen_to_board("rnbqkb1r/ppp2ppp/4pn2/3p4/3P4/5N2/PPP2PPP/RNBQKB1R");
+    cpu_vs_cpu(board, 6, -2); // Start a game with the engine playing against itself
 
     return 0;
 }

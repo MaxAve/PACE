@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <algorithm>
 #include "types.h"
 #include "board.h"
 #include "eval.h"
@@ -23,24 +24,24 @@ namespace chess
         typedef struct
         {
             Eval eval;
-            u8 age; // Used to determine whether this evaluation matters anymore (old evaluations should be deleted from lookup table)
-        } EvalAge;
+            int lru_score; // Used to determine how relevant an entry is (should be incremented when entry is accessed)
+        } EvalScored;
 
-        extern std::unordered_map<board::Board, EvalAge, board::BoardHash, board::BoardEqual> lookup_table;
+        extern std::unordered_map<board::Board, EvalScored, board::BoardHash, board::BoardEqual> transposition_table;
 
         extern u64 positions_analyzed;
 
         /**
-         * @brief Adds a board state and eval to the lookup table
+         * @brief Adds a board state and eval to the transposition table
          * @param board 
          */
-        void add_to_lookup(board::Board board, Eval eval);
+        void add_to_transposition_table(board::Board board, Eval eval);
 
         /**
-         * @brief Iterates through the lookup table, updating the age of each element and deleting aged ones
-         * @param elem_deletion_age the element age at which it should be deleted
+         * @brief Iterates through the transposition table, updating the score of each entry and deleting irrelevant ones
+         * @param max_table_size when the table is larger than max_table_size, a certain amount of entries with the lowest LRU score will be deleted to keep the table at a constant size
          */
-        void update_lookup(u8 elem_deletion_age);
+        void update_transposition_table(int removal_score);
 
         /**
          * @brief Minimax algorithm which returns the best move and evaluation in a given position

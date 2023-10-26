@@ -1,6 +1,6 @@
 # Stuff from author
 /.vscode
-/TODO
+/TODO*
 
 # Prerequisites
 *.d

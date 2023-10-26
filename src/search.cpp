@@ -1,28 +1,26 @@
 #include "../include/search.h"
 
-std::unordered_map<chess::board::Board, chess::search::EvalAge, chess::board::BoardHash, chess::board::BoardEqual> chess::search::lookup_table;
+std::unordered_map<chess::board::Board, chess::search::EvalScored, chess::board::BoardHash, chess::board::BoardEqual> chess::search::transposition_table;
 
 u64 chess::search::positions_analyzed = 0ULL;
 
-void chess::search::add_to_lookup(chess::board::Board board, chess::search::Eval eval)
+void chess::search::add_to_transposition_table(chess::board::Board board, chess::search::Eval eval)
 {
-    chess::search::lookup_table[board] = {eval, 0};
+    chess::search::transposition_table[board] = {eval, 0};
 }
 
-void chess::search::update_lookup(u8 elem_deletion_age)
+void chess::search::update_transposition_table(int removal_score)
 {
-    // Incerement all entries' age and add aged ones to the deletion list
     std::vector<chess::board::Board> to_delete;
-    for(auto& elem : chess::search::lookup_table)
+    for(auto& entry : chess::search::transposition_table)
     {
-        if(elem.second.age >= elem_deletion_age-1)
-            to_delete.push_back(elem.first);
-        elem.second.age++;
+        entry.second.lru_score--;
+        if(entry.second.lru_score <= removal_score)
+            to_delete.push_back(entry.first);
     }
-    // Delete old entries
-    for(auto& key : to_delete)
+    for(auto& board : to_delete)
     {
-        chess::search::lookup_table.erase(key);
+        chess::search::transposition_table.erase(board);
     }
 }
 
@@ -31,13 +29,21 @@ chess::search::Eval chess::search::minimax(const chess::board::Board &b, bool ma
     chess::search::Eval position_eval;
     
     if(!b.bitboards[KW]) {
-        position_eval.eval = -1000000000 - depth;
+        position_eval.eval = -1000000000 - depth; // Checkmate - amount of moves required to get there
         return position_eval;
     } else if(!b.bitboards[KB]) {
-        position_eval.eval = 1000000000 + depth;
+        position_eval.eval = 1000000000 + depth; // Checkmate + amount of moves required to get there
         return position_eval;
     } else if(depth == 0) {
-        position_eval.eval = chess::eval::eval_pst(b); // TODO improve evaluation
+        if(chess::search::transposition_table.find(b) == chess::search::transposition_table.end())
+        {
+            position_eval.eval = chess::eval::eval_pst(b); // TODO improve evaluation
+            chess::search::add_to_transposition_table(b, position_eval);
+        }
+        else {
+            position_eval.eval = chess::search::transposition_table[b].eval.eval;
+            chess::search::transposition_table[b].lru_score++; // Increase evaluation relevancy score
+        }
         return position_eval;
     } else {
         if(maximizing)
