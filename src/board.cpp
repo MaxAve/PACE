@@ -9,7 +9,7 @@ void chess::board::print_board(chess::board::Board board, bool display_flags, u6
         for(u8 j = 0; j < 12; ++j)
         {
             std::string p = "";
-            p += (j < 6) ? "\033[30m" : "\033[97m";
+            p += (j < 6) ? "\033[33m" : "\033[97m";
             p += piece_chars[j];
             if(board.bitboards[j] & (1ULL << i))
             {

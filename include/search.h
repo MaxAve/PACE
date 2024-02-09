@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <algorithm>
+#include <limits.h>
 #include "types.h"
 #include "board.h"
 #include "eval.h"
@@ -27,7 +28,7 @@ namespace chess
             int lru_score; // Used to determine how relevant an entry is (should be incremented when entry is accessed)
         } EvalScored;
 
-        extern std::unordered_map<board::Board, EvalScored, board::BoardHash, board::BoardEqual> transposition_table;
+        extern std::unordered_map<board::Board, EvalScored, board::BoardHash, board::BoardEqual> transposition_table; // TODO use zobrist hashing instead of this
 
         extern u64 positions_analyzed;
 

@@ -2,6 +2,7 @@
 #include <cmath>
 #include <fstream>
 #include <sstream>
+#include <limits.h>
 #include "../include/types.h"
 #include "../include/board.h"
 #include "../include/moves.h"
@@ -21,7 +22,7 @@ bool clear_screen = true;
 void cpu_vs_cpu(Board &b, u8 depth, u64 max_transposition_table_size)
 {
     if(clear_screen)
-        system("cls");
+        system("clear");
     print_board(b, true); // Print board
     std::cout << "\nPosition evaluation: -\nPositions analyzed: -\n";
 
@@ -37,7 +38,7 @@ void cpu_vs_cpu(Board &b, u8 depth, u64 max_transposition_table_size)
         b.bitboards[evaluation.promotion_piece] = evaluation.promotion_bitboard; // Promotion (if a pawn reaches the opposite end of board)
 
         if(clear_screen)
-            system("cls");
+            system("clear");
 
         print_board(b, true); // Print board
         b.flags ^= (1ULL << 4); // Switch turns
@@ -60,7 +61,7 @@ void cpu_vs_cpu(Board &b, u8 depth, u64 max_transposition_table_size)
 
         std::cout << "\nUpdating transposition table...\n";
 
-        update_transposition_table(max_transposition_table_size);
+        //update_transposition_table(max_transposition_table_size);
 
         std::cout << "Done! (" << transposition_table.size() << " entries updated)\n";
     }
@@ -69,7 +70,7 @@ void cpu_vs_cpu(Board &b, u8 depth, u64 max_transposition_table_size)
 int main(int argc, char** argv)
 {
     Board board = fen_to_board("rnbqkb1r/ppp2ppp/4pn2/3p4/3P4/5N2/PPP2PPP/RNBQKB1R");
-    cpu_vs_cpu(board, 6, -2); // Start a game with the engine playing against itself
+    cpu_vs_cpu(board, 6, 0); // Start a game with the engine playing against itself
 
     return 0;
 }

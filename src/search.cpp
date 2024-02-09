@@ -35,15 +35,15 @@ chess::search::Eval chess::search::minimax(const chess::board::Board &b, bool ma
         position_eval.eval = 1000000000 + depth; // Checkmate + amount of moves required to get there
         return position_eval;
     } else if(depth == 0) {
-        if(chess::search::transposition_table.find(b) == chess::search::transposition_table.end())
-        {
+        //if(chess::search::transposition_table.find(b) == chess::search::transposition_table.end())
+        //{
             position_eval.eval = chess::eval::eval_pst(b); // TODO improve evaluation
-            chess::search::add_to_transposition_table(b, position_eval);
-        }
-        else {
-            position_eval.eval = chess::search::transposition_table[b].eval.eval;
-            chess::search::transposition_table[b].lru_score++; // Increase evaluation relevancy score
-        }
+        //     chess::search::add_to_transposition_table(b, position_eval);
+        // }
+        // else {
+        //     position_eval.eval = chess::search::transposition_table[b].eval.eval;
+        //     chess::search::transposition_table[b].lru_score++; // Increase evaluation relevancy score
+        // }
         return position_eval;
     } else {
         if(maximizing)

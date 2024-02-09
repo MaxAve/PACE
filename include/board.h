@@ -29,6 +29,7 @@ namespace chess
             u8 flags;          // Contains flags like castling rights and current turn
         } Board;
 
+        // TODO replace this with zobrist hashing
         struct BoardHash {
             std::size_t operator()(const Board &b) const {
                 std::size_t hash = 17;
