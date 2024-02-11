@@ -19,17 +19,19 @@ using namespace chess::uci;
 
 bool clear_screen = true;
 
-void cpu_vs_cpu(Board &b, u8 depth, u64 max_transposition_table_size)
+void cpu_vs_cpu(Board &b, u8 depth, int transposition_table_min_lru)
 {
     if(clear_screen)
-        system("clear");
+        (void)system("clear");
     print_board(b, true); // Print board
     std::cout << "\nPosition evaluation: -\nPositions analyzed: -\n";
 
     while(b.bitboards[KW] && b.bitboards[KB])
     {
         positions_analyzed = 0; // Set counter for positions analyzed to 0
+        std::cout << "\nThinking...\n";
         Eval evaluation = minimax(b, b.flags & (1ULL << 4), INT_MIN, INT_MAX, depth); // Evaluate the position and find the best move
+        std::cout << "Done thinking!\n";
 
         // Modify main board to reflect the move
         for(int i = 0; i < 12; ++i)
@@ -38,10 +40,12 @@ void cpu_vs_cpu(Board &b, u8 depth, u64 max_transposition_table_size)
         b.bitboards[evaluation.promotion_piece] = evaluation.promotion_bitboard; // Promotion (if a pawn reaches the opposite end of board)
 
         if(clear_screen)
-            system("clear");
+            (void)system("clear");
 
         print_board(b, true); // Print board
         b.flags ^= (1ULL << 4); // Switch turns
+
+        std::cout << "Position hash: " << chess::search::zobrist_hash(b) << "\n";
 
         // Display position analysis and number of positions analyzed
         if(std::abs(evaluation.eval) < 1000000000)
@@ -61,7 +65,7 @@ void cpu_vs_cpu(Board &b, u8 depth, u64 max_transposition_table_size)
 
         std::cout << "\nUpdating transposition table...\n";
 
-        //update_transposition_table(max_transposition_table_size);
+        update_transposition_table(transposition_table_min_lru);
 
         std::cout << "Done! (" << transposition_table.size() << " entries updated)\n";
     }
@@ -69,8 +73,9 @@ void cpu_vs_cpu(Board &b, u8 depth, u64 max_transposition_table_size)
 
 int main(int argc, char** argv)
 {
-    Board board = fen_to_board("rnbqkb1r/ppp2ppp/4pn2/3p4/3P4/5N2/PPP2PPP/RNBQKB1R");
-    cpu_vs_cpu(board, 6, 0); // Start a game with the engine playing against itself
+    Board board = fen_to_board("2k5/4Q3/8/8/2K5/8/8/8 w - - 0 1");
+    chess::zobrist::init_zobrist_keys();
+    cpu_vs_cpu(board, 8, -2); // Start a game with the engine playing against itself
 
     return 0;
 }

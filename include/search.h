@@ -24,11 +24,17 @@ namespace chess
         // Used in lookup tables
         typedef struct
         {
-            Eval eval;
+            int eval;
             int lru_score; // Used to determine how relevant an entry is (should be incremented when entry is accessed)
         } EvalScored;
+        
+        /**
+         * @brief Uses Zobrist hashing to convert a position into a 64-bit number
+         * @param b position to hash
+        */
+        u64 zobrist_hash(const board::Board &b);
 
-        extern std::unordered_map<board::Board, EvalScored, board::BoardHash, board::BoardEqual> transposition_table; // TODO use zobrist hashing instead of this
+        extern std::unordered_map<board::Board, EvalScored, board::BoardHash, board::BoardEqual> transposition_table;
 
         extern u64 positions_analyzed;
 
@@ -36,11 +42,11 @@ namespace chess
          * @brief Adds a board state and eval to the transposition table
          * @param board 
          */
-        void add_to_transposition_table(board::Board board, Eval eval);
+        void add_to_transposition_table(const board::Board &board, int eval);
 
         /**
          * @brief Iterates through the transposition table, updating the score of each entry and deleting irrelevant ones
-         * @param max_table_size when the table is larger than max_table_size, a certain amount of entries with the lowest LRU score will be deleted to keep the table at a constant size
+         * @param removal_score after every move the engine makes, each entry in the transposition table has their score removed. If said score is below removal_score, it will get deleted from the transposition table as we can assume that it has become irrelevant
          */
         void update_transposition_table(int removal_score);
 

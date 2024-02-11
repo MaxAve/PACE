@@ -3,6 +3,7 @@
 #include "types.h"
 #include <iostream>
 #include <unordered_map>
+#include "zobrist.h"
 
 #define WHITE_TURN         0b00010000
 #define WHITE_SHORT_CASTLE 0b00001000
@@ -29,23 +30,27 @@ namespace chess
             u8 flags;          // Contains flags like castling rights and current turn
         } Board;
 
-        // TODO replace this with zobrist hashing
         struct BoardHash {
             std::size_t operator()(const Board &b) const {
-                std::size_t hash = 17;
-                hash = hash * 31 + std::hash<u8>{}(b.flags);
-                hash = hash * 31 + std::hash<u64>{}(b.bitboards[0]);
-                hash = hash * 31 + std::hash<u64>{}(b.bitboards[1]);
-                hash = hash * 31 + std::hash<u64>{}(b.bitboards[2]);
-                hash = hash * 31 + std::hash<u64>{}(b.bitboards[3]);
-                hash = hash * 31 + std::hash<u64>{}(b.bitboards[4]);
-                hash = hash * 31 + std::hash<u64>{}(b.bitboards[5]);
-                hash = hash * 31 + std::hash<u64>{}(b.bitboards[6]);
-                hash = hash * 31 + std::hash<u64>{}(b.bitboards[7]);
-                hash = hash * 31 + std::hash<u64>{}(b.bitboards[8]);
-                hash = hash * 31 + std::hash<u64>{}(b.bitboards[9]);
-                hash = hash * 31 + std::hash<u64>{}(b.bitboards[10]);
-                hash = hash * 31 + std::hash<u64>{}(b.bitboards[11]);
+                // Zobrist hashing
+                std::size_t hash = 0;
+                for(u8 i = 0; i < 12; ++i)
+                {
+                    for(u8 j = 0; j < 64; ++j)
+                    {
+                        if(b.bitboards[i] & (1ULL << j))
+                        {
+                            hash ^= chess::zobrist::zobrist_keys[i][j];
+                        }
+                    }
+                }
+                for(u8 i = 0; i < 8; ++i)
+                {
+                    if(b.flags & (1 << i))
+                    {
+                        hash ^= chess::zobrist::zobrist_keys_u8[i];
+                    }
+                }
                 return hash;
             }
         };

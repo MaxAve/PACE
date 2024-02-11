@@ -1,26 +1,44 @@
 #include "../include/search.h"
 
-std::unordered_map<chess::board::Board, chess::search::EvalScored, chess::board::BoardHash, chess::board::BoardEqual> chess::search::transposition_table;
-
 u64 chess::search::positions_analyzed = 0ULL;
 
-void chess::search::add_to_transposition_table(chess::board::Board board, chess::search::Eval eval)
+std::unordered_map<chess::board::Board, chess::search::EvalScored, chess::board::BoardHash, chess::board::BoardEqual> chess::search::transposition_table = {};
+
+u64 chess::search::zobrist_hash(const chess::board::Board &b)
 {
-    chess::search::transposition_table[board] = {eval, 0};
+    u64 hash = 0;
+    for(u8 i = 0; i < 12; ++i)
+    {
+        for(u8 j = 0; j < 64; ++j)
+        {
+            if(b.bitboards[i] & (1ULL << j))
+            {
+                hash ^= chess::zobrist::zobrist_keys[i][j];
+            }
+        }
+    }
+    for(u8 i = 0; i < 8; ++i)
+    {
+        if(b.flags & (1 << i))
+        {
+            hash ^= chess::zobrist::zobrist_keys_u8[i];
+        }
+    }
+    return hash;
 }
 
 void chess::search::update_transposition_table(int removal_score)
 {
-    std::vector<chess::board::Board> to_delete;
+    std::vector<chess::board::Board> keys_to_delete;
     for(auto& entry : chess::search::transposition_table)
     {
         entry.second.lru_score--;
         if(entry.second.lru_score <= removal_score)
-            to_delete.push_back(entry.first);
+            keys_to_delete.push_back(entry.first);
     }
-    for(auto& board : to_delete)
+    for(auto& key : keys_to_delete)
     {
-        chess::search::transposition_table.erase(board);
+        chess::search::transposition_table.erase(key);
     }
 }
 
@@ -81,7 +99,18 @@ chess::search::Eval chess::search::minimax(const chess::board::Board &b, bool ma
                                 hypothetical_board.bitboards[10] |= (hypothetical_board.bitboards[6] & 0xff00000000000000ULL);
                                 hypothetical_board.bitboards[6] &= 0x00ffffffffffffffULL;
                                 
-                                chess::search::Eval hypothetical_eval = chess::search::minimax(hypothetical_board, false, alpha, beta, depth-1);
+                                chess::search::Eval hypothetical_eval;
+                                // if(chess::search::transposition_table.find(hypothetical_board) == chess::search::transposition_table.end())
+                                // {
+                                    // Go deeper into search tree and save result to transposition table
+                                    hypothetical_eval = chess::search::minimax(hypothetical_board, false, alpha, beta, depth-1);
+                                //     const chess::search::EvalScored e = {hypothetical_eval.eval, 0};
+                                //     chess::search::transposition_table[hypothetical_board] = e;
+                                // }
+                                // else {
+                                //     hypothetical_eval.eval = chess::search::transposition_table[hypothetical_board].eval;
+                                //     chess::search::transposition_table[hypothetical_board].lru_score += 1;
+                                // }
 
                                 if(hypothetical_eval.eval > position_eval.eval)
                                 {
@@ -117,7 +146,18 @@ chess::search::Eval chess::search::minimax(const chess::board::Board &b, bool ma
                                 hypothetical_board.bitboards[10] |= (hypothetical_board.bitboards[6] & 0xff00000000000000ULL);
                                 hypothetical_board.bitboards[6] &= 0x00ffffffffffffffULL;
 
-                                chess::search::Eval hypothetical_eval = chess::search::minimax(hypothetical_board, false, alpha, beta, depth-1);
+                                chess::search::Eval hypothetical_eval;
+                                // if(chess::search::transposition_table.find(hypothetical_board) == chess::search::transposition_table.end())
+                                // {
+                                    // Go deeper into search tree and save result to transposition table
+                                    hypothetical_eval = chess::search::minimax(hypothetical_board, false, alpha, beta, depth-1);
+                                //     const chess::search::EvalScored e = {hypothetical_eval.eval, 0};
+                                //     chess::search::transposition_table[hypothetical_board] = e;
+                                // }
+                                // else {
+                                //     hypothetical_eval.eval = chess::search::transposition_table[hypothetical_board].eval;
+                                //     chess::search::transposition_table[hypothetical_board].lru_score += 1;
+                                // }
 
                                 if(hypothetical_eval.eval > position_eval.eval)
                                 {
@@ -173,7 +213,19 @@ chess::search::Eval chess::search::minimax(const chess::board::Board &b, bool ma
                                 hypothetical_board.bitboards[4] |= (hypothetical_board.bitboards[0] & 0x00000000000000ffULL);
                                 hypothetical_board.bitboards[0] &= 0xffffffffffffff00ULL;
 
-                                chess::search::Eval hypothetical_eval = chess::search::minimax(hypothetical_board, true, alpha, beta, depth-1);
+                                chess::search::Eval hypothetical_eval;
+                                // if(chess::search::transposition_table.find(hypothetical_board) == chess::search::transposition_table.end())
+                                // {
+                                    // Go deeper into search tree and save result to transposition table
+                                    hypothetical_eval = chess::search::minimax(hypothetical_board, true, alpha, beta, depth-1);
+                                //     const chess::search::EvalScored e = {hypothetical_eval.eval, 0};
+                                //     chess::search::transposition_table[hypothetical_board] = e;
+                                // }
+                                // else {
+                                //     hypothetical_eval.eval = chess::search::transposition_table[hypothetical_board].eval;
+                                //     chess::search::transposition_table[hypothetical_board].lru_score += 1;
+                                // }
+
                                 if(hypothetical_eval.eval < position_eval.eval)
                                 {
                                     position_eval.eval = hypothetical_eval.eval;
@@ -208,7 +260,19 @@ chess::search::Eval chess::search::minimax(const chess::board::Board &b, bool ma
                                 hypothetical_board.bitboards[4] |= (hypothetical_board.bitboards[0] & 0x00000000000000ffULL);
                                 hypothetical_board.bitboards[0] &= 0xffffffffffffff00ULL;
 
-                                chess::search::Eval hypothetical_eval = chess::search::minimax(hypothetical_board, true, alpha, beta, depth-1);
+                                chess::search::Eval hypothetical_eval;
+                                // if(chess::search::transposition_table.find(hypothetical_board) == chess::search::transposition_table.end())
+                                // {
+                                    // Go deeper into search tree and save result to transposition table
+                                    hypothetical_eval = chess::search::minimax(hypothetical_board, true, alpha, beta, depth-1);
+                                //     const chess::search::EvalScored e = {hypothetical_eval.eval, 0};
+                                //     chess::search::transposition_table[hypothetical_board] = e;
+                                // }
+                                // else {
+                                //     hypothetical_eval.eval = chess::search::transposition_table[hypothetical_board].eval;
+                                //     chess::search::transposition_table[hypothetical_board].lru_score += 1;
+                                // }
+
                                 if(hypothetical_eval.eval < position_eval.eval)
                                 {
                                     position_eval.eval = hypothetical_eval.eval;
