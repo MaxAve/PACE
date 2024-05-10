@@ -19,7 +19,7 @@ using namespace chess::uci;
 
 bool clear_screen = true;
 
-void cpu_vs_cpu(Board &b, u8 depth, int transposition_table_min_lru)
+void cpu_vs_cpu(Board &b, u8 depth)
 {
     if(clear_screen)
         (void)system("clear");
@@ -45,7 +45,7 @@ void cpu_vs_cpu(Board &b, u8 depth, int transposition_table_min_lru)
         print_board(b, true); // Print board
         b.flags ^= (1ULL << 4); // Switch turns
 
-        std::cout << "Position hash: " << chess::search::zobrist_hash(b) << "\n";
+        //std::cout << "Position hash: " << chess::search::zobrist_hash(b) << "\n";
 
         // Display position analysis and number of positions analyzed
         if(std::abs(evaluation.eval) < 1000000000)
@@ -65,17 +65,17 @@ void cpu_vs_cpu(Board &b, u8 depth, int transposition_table_min_lru)
 
         std::cout << "\nUpdating transposition table...\n";
 
-        update_transposition_table(transposition_table_min_lru);
+        //update_transposition_table(transposition_table_min_lru);
 
-        std::cout << "Done! (" << transposition_table.size() << " entries updated)\n";
+        //std::cout << "Done! (" << transposition_table.size() << " entries updated)\n";
     }
 }
 
 int main(int argc, char** argv)
 {
-    Board board = fen_to_board("2k5/4Q3/8/8/2K5/8/8/8 w - - 0 1");
+    Board board = fen_to_board("r2qkbnr/pp2pppp/2npb3/8/3NP3/2N5/PPP2PPP/R1BQKB1R w KQkq - 0 1");
     chess::zobrist::init_zobrist_keys();
-    cpu_vs_cpu(board, 8, -2); // Start a game with the engine playing against itself
+    cpu_vs_cpu(board, 4); // Start a game with the engine playing against itself
 
     return 0;
 }
