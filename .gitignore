@@ -1,9 +1,6 @@
-# Executable with no extention
-/PACE
-
-# Stuff from author
 /.vscode
 /TODO*
+/bin
 
 # Prerequisites
 *.d

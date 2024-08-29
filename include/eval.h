@@ -72,5 +72,8 @@ namespace chess
 
         /* Evaluates position using piece square tables */
         int eval_pst(const board::Board &b);
+
+        /* Checks for draws */
+        bool is_draw(const board::Board &b, const std::unordered_map<u64, u8> &position_history, u64 white_pieces_bb, u64 black_pieces_bb);
     }
 }

@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <algorithm>
+#include <unordered_map>
 #include <limits.h>
 #include "types.h"
 #include "board.h"
@@ -21,22 +22,9 @@ namespace chess
             u64 promotion_bitboard;
         } Eval;
 
-        // Used in lookup tables
-        typedef struct
-        {
-            int eval;
-            int lru_score; // Used to determine how relevant an entry is (should be incremented when entry is accessed)
-        } EvalScored;
-        
-        /**
-         * @brief Uses Zobrist hashing to convert a position into a 64-bit number
-         * @param b position to hash
-        */
-        u64 zobrist_hash(const board::Board &b);
+        extern u64 positions_analyzed; // Counter for debugging
 
-        extern std::unordered_map<board::Board, EvalScored, board::BoardHash, board::BoardEqual> transposition_table;
-
-        extern u64 positions_analyzed;
+        extern std::unordered_map<u64, u8> position_history; // Used for checking for three-fold repetition
 
         /**
          * @brief Adds a board state and eval to the transposition table

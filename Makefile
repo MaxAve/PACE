@@ -3,7 +3,7 @@
 # compiler flags and whatnot
 all: PACE
 PACE: $(wildcard src/*.cpp)
-	g++ -O3 $(wildcard src/*.cpp) -o PACE
+	g++ -O3 $(wildcard src/*.cpp) -o bin/PACE
 clean:
 	rm -f PACE
 .PHONY: all clean

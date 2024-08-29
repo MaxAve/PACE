@@ -2,60 +2,36 @@
 
 u64 chess::search::positions_analyzed = 0ULL;
 
-// std::unordered_map<chess::board::Board, chess::search::EvalScored, chess::board::BoardHash, chess::board::BoardEqual> chess::search::transposition_table = {};
-
-// u64 chess::search::zobrist_hash(const chess::board::Board &b)
-// {
-//     u64 hash = 0;
-//     for(u8 i = 0; i < 12; ++i)
-//     {
-//         for(u8 j = 0; j < 64; ++j)
-//         {
-//             if(b.bitboards[i] & (1ULL << j))
-//             {
-//                 hash ^= chess::zobrist::zobrist_keys[i][j];
-//             }
-//         }
-//     }
-//     for(u8 i = 0; i < 8; ++i)
-//     {
-//         if(b.flags & (1 << i))
-//         {
-//             hash ^= chess::zobrist::zobrist_keys_u8[i];
-//         }
-//     }
-//     return hash;
-// }
-
-// void chess::search::update_transposition_table(int removal_score)
-// {
-//     std::vector<chess::board::Board> keys_to_delete;
-//     for(auto& entry : chess::search::transposition_table)
-//     {
-//         entry.second.lru_score--;
-//         if(entry.second.lru_score <= removal_score)
-//             keys_to_delete.push_back(entry.first);
-//     }
-//     for(auto& key : keys_to_delete)
-//     {
-//         chess::search::transposition_table.erase(key);
-//     }
-// }
+std::unordered_map<u64, u8> chess::search::position_history = {};
 
 chess::search::Eval chess::search::minimax(const chess::board::Board &b, bool maximizing, int alpha, int beta, u8 depth)
 {
     chess::search::Eval position_eval;
     
-    if(!b.bitboards[KW]) {
+    const u64 w_bb = WHITE_PIECE_BB(b);
+    const u64 b_bb = BLACK_PIECE_BB(b);
+
+    if(!b.bitboards[KW])
+    {
         position_eval.eval = -1000000000 - depth; // Checkmate - amount of moves required to get there
         return position_eval;
-    } else if(!b.bitboards[KB]) {
+    }
+    else if(!b.bitboards[KB])
+    {
         position_eval.eval = 1000000000 + depth; // Checkmate + amount of moves required to get there
         return position_eval;
-    } else if(depth == 0) {
+    }
+    else if(chess::eval::is_draw(b, chess::search::position_history, w_bb, b_bb))
+    {
+        position_eval.eval = 0;
+        return position_eval;
+    }
+    else if(depth == 0) {
         position_eval.eval = chess::eval::eval_pst(b); // TODO improve evaluation
         return position_eval;
-    } else {
+    }
+    else
+    {
         if(maximizing)
         {
             position_eval = {INT_MIN, 0, 0ULL};
@@ -66,9 +42,6 @@ chess::search::Eval chess::search::minimax(const chess::board::Board &b, bool ma
                 {
                     if(b.bitboards[i] & (1ULL << j))
                     {
-                        const u64 w_bb = WHITE_PIECE_BB(b);
-                        const u64 b_bb = BLACK_PIECE_BB(b);
-
                         const u64 moves_bb = chess::moves::get_attack_bitboard(i, w_bb, b_bb, w_bb | b_bb, j);
                         u64 ordered_moves[2];
                         ordered_moves[0] = moves_bb & b_bb; // Capturing moves
@@ -125,9 +98,6 @@ chess::search::Eval chess::search::minimax(const chess::board::Board &b, bool ma
                 {
                     if(b.bitboards[i] & (1ULL << j))
                     {
-                        const u64 w_bb = WHITE_PIECE_BB(b);
-                        const u64 b_bb = BLACK_PIECE_BB(b);
-
                         u64 moves_bb = chess::moves::get_attack_bitboard(i, w_bb, b_bb, w_bb | b_bb, j);
                         u64 ordered_moves[2];
                         ordered_moves[0] = moves_bb & b_bb; // Capturing moves
