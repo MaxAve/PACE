@@ -5,5 +5,5 @@ all: PACE
 PACE: $(wildcard src/*.cpp)
 	g++ -O3 $(wildcard src/*.cpp) -o bin/PACE
 clean:
-	rm -f PACE
+	rm -f bin/PACE
 .PHONY: all clean

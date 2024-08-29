@@ -9,6 +9,7 @@
 #include "../include/eval.h"
 #include "../include/search.h"
 #include "../include/uci.h"
+#include "../include/gui.h"
 
 using namespace chess;
 using namespace chess::board;
@@ -44,7 +45,7 @@ void cpu_vs_cpu(Board &b, u8 depth)
         if(clear_screen)
             (void)system("clear");
 
-        print_board(b, true, chess::moves::get_attack_bitboard(5, WHITE_PIECE_BB(b), BLACK_PIECE_BB(b), WHITE_PIECE_BB(b) | BLACK_PIECE_BB(b), 0)); // Print board
+        print_board(b, true/*, chess::moves::get_attack_bitboard(5, WHITE_PIECE_BB(b), BLACK_PIECE_BB(b), WHITE_PIECE_BB(b) | BLACK_PIECE_BB(b), 0)*/); // Print board
         b.flags ^= (1ULL << 4); // Switch turns
 
         std::cout << "Position hash: " << chess::board::zobrist_hash(b) << "\n";
@@ -85,9 +86,11 @@ void cpu_vs_cpu(Board &b, u8 depth)
 
 int main(int argc, char** argv)
 {
-    Board board = fen_to_board("1k6/4Q3/8/2K5/8/8/8/8 w - - 0 1");
+    Board board = fen_to_board("rn2kb1r/pp2pppp/2p2n2/q4b2/2BP4/2N2N2/PPP2PPP/R1BQK2R w - - 0 1");
     chess::zobrist::init_zobrist_keys();
-    cpu_vs_cpu(board, 8); // Start a game with the engine playing against itself
+    // cpu_vs_cpu(board, 4); // Start a game with the engine playing against itself
+
+    gui::display(board);
 
     return 0;
 }
