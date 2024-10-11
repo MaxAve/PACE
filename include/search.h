@@ -22,6 +22,12 @@ namespace chess
             u64 promotion_bitboard;
         } Eval;
 
+        typedef struct
+        {
+            chess::board::Board board; // New position
+            u8 piece_to_move; // The piece that was moved
+        } BoardMove;
+        
         extern u64 positions_analyzed; // Counter for debugging
 
         extern std::unordered_map<u64, u8> position_history; // Used for checking for three-fold repetition

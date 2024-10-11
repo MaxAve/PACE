@@ -1,6 +1,6 @@
 #include "../include/gui.h"
 
-void chess::gui::display(const chess::board::Board &b, bool double_wid)
+void chess::gui::display(const chess::board::Board &b, u64 highlight)
 {
     const int screen_width = 14 * 8;
     const int screen_height = 7 * 8;
@@ -29,20 +29,27 @@ void chess::gui::display(const chess::board::Board &b, bool double_wid)
         int y = (7 - (i / 8)) * 7;
         int x = (7 - (i % 8)) * 14;
 
+        if(highlight & (1ULL << i))
+        {
+            for(int y2 = 0; y2 < 7; y2++)
+                for(int x2 = 0; x2 < 14; x2++)
+                    colors[y + y2][x + x2] = GUI_COLOR_HIGHLIGHT;
+        }
+
         // Juicer
         if(b.bitboards[PW] & (1ULL << i))
         {
-            for(int a = 0; a < 5; a++)
+            for(int a = 0; a < 3; a++)
             {
-                colors[y + 1 + a][x + 5] = GUI_COLOR_WHITE;
-                colors[y + 1 + a][x + 6] = GUI_COLOR_WHITE;
-                colors[y + 1 + a][x + 7] = GUI_COLOR_WHITE;
-                colors[y + 1 + a][x + 8] = GUI_COLOR_WHITE;
+                colors[y + 3 + a][x + 5] = GUI_COLOR_WHITE;
+                colors[y + 3 + a][x + 6] = GUI_COLOR_WHITE;
+                colors[y + 3 + a][x + 7] = GUI_COLOR_WHITE;
+                colors[y + 3 + a][x + 8] = GUI_COLOR_WHITE;
             }
-            colors[y + 2][x + 4] = GUI_COLOR_WHITE;
-            colors[y + 2][x + 9] = GUI_COLOR_WHITE;
             colors[y + 5][x + 4] = GUI_COLOR_WHITE;
             colors[y + 5][x + 9] = GUI_COLOR_WHITE;
+            colors[y + 2][x + 6] = GUI_COLOR_WHITE;
+            colors[y + 2][x + 7] = GUI_COLOR_WHITE;
         }
 
         // Knight
@@ -157,17 +164,17 @@ void chess::gui::display(const chess::board::Board &b, bool double_wid)
         // Juicer
         if(b.bitboards[PB] & (1ULL << i))
         {
-            for(int a = 0; a < 5; a++)
+            for(int a = 0; a < 3; a++)
             {
-                colors[y + 1 + a][x + 5] = GUI_COLOR_BLACK;
-                colors[y + 1 + a][x + 6] = GUI_COLOR_BLACK;
-                colors[y + 1 + a][x + 7] = GUI_COLOR_BLACK;
-                colors[y + 1 + a][x + 8] = GUI_COLOR_BLACK;
+                colors[y + 3 + a][x + 5] = GUI_COLOR_BLACK;
+                colors[y + 3 + a][x + 6] = GUI_COLOR_BLACK;
+                colors[y + 3 + a][x + 7] = GUI_COLOR_BLACK;
+                colors[y + 3 + a][x + 8] = GUI_COLOR_BLACK;
             }
-            colors[y + 2][x + 4] = GUI_COLOR_BLACK;
-            colors[y + 2][x + 9] = GUI_COLOR_BLACK;
             colors[y + 5][x + 4] = GUI_COLOR_BLACK;
             colors[y + 5][x + 9] = GUI_COLOR_BLACK;
+            colors[y + 2][x + 6] = GUI_COLOR_BLACK;
+            colors[y + 2][x + 7] = GUI_COLOR_BLACK;
         }
 
         // Knight
@@ -300,12 +307,19 @@ void chess::gui::display(const chess::board::Board &b, bool double_wid)
                 case 3:
                     out = "\033[0;107m \033[0m";
                     break;
+                case 4:
+                    out = "\033[0;43m \033[0m";
+                    break;
                 default:
                     out = " ";
                     break;
             }
             std::cout << out;
         }
+        if((y % 7) == 3)
+            std::cout << " " << y / 7;
         std::cout << "\n";
     }
+
+    std::cout << "      0             1             2             3             4             5             6             7\n";
 }

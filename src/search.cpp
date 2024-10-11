@@ -36,6 +36,9 @@ chess::search::Eval chess::search::minimax(const chess::board::Board &b, bool ma
         {
             position_eval = {INT_MIN, 0, 0ULL};
 
+            std::vector<chess::search::BoardMove> future_states;
+
+            // Calculate all future states for this position
             for(u8 i = 6; i < 12; ++i)
             {
                 for(char j = 63; j >= 0; --j)
@@ -66,32 +69,61 @@ chess::search::Eval chess::search::minimax(const chess::board::Board &b, bool ma
                                     hypothetical_board.bitboards[10] |= (hypothetical_board.bitboards[6] & 0xff00000000000000ULL);
                                     hypothetical_board.bitboards[6] &= 0x00ffffffffffffffULL;
 
-                                    chess::search::Eval hypothetical_eval = chess::search::minimax(hypothetical_board, false, alpha, beta, depth-1);
+                                    chess::search::BoardMove future_state;
+                                    future_state.board = hypothetical_board;
+                                    future_state.piece_to_move = i;
+                                    future_states.push_back(future_state);
 
-                                    if(hypothetical_eval.eval > position_eval.eval)
-                                    {
-                                        position_eval.eval = hypothetical_eval.eval;
-                                        position_eval.new_bitboard = hypothetical_board.bitboards[i];
-                                        position_eval.piece_to_move = i;
-                                        position_eval.promotion_piece = 10;
-                                        position_eval.promotion_bitboard = hypothetical_board.bitboards[10];
-                                    }
+                                    // chess::search::Eval hypothetical_eval = chess::search::minimax(hypothetical_board, false, alpha, beta, depth-1);
 
-                                    positions_analyzed++;
+                                    // if(hypothetical_eval.eval > position_eval.eval)
+                                    // {
+                                    //     position_eval.eval = hypothetical_eval.eval;
+                                    //     position_eval.new_bitboard = hypothetical_board.bitboards[i];
+                                    //     position_eval.piece_to_move = i;
+                                    //     position_eval.promotion_piece = 10;
+                                    //     position_eval.promotion_bitboard = hypothetical_board.bitboards[10];
+                                    // }
 
-                                    alpha = std::max(alpha, position_eval.eval);
-                                    if(alpha >= beta)
-                                        return position_eval;
+                                    // positions_analyzed++;
+
+                                    // alpha = std::max(alpha, position_eval.eval);
+                                    // if(alpha >= beta)
+                                    //     return position_eval;
                                 }
                             }
                         }
                     }
                 }
             }
+
+            // Iterate over all futue states
+            for(int i = 0; i < future_states.size(); i++)
+            {
+                chess::search::Eval hypothetical_eval = chess::search::minimax(future_states.at(i).board, false, alpha, beta, depth-1);
+
+                if(hypothetical_eval.eval > position_eval.eval)
+                {
+                    position_eval.eval = hypothetical_eval.eval;
+                    position_eval.new_bitboard = future_states.at(i).board.bitboards[future_states.at(i).piece_to_move];
+                    position_eval.piece_to_move = future_states.at(i).piece_to_move;
+                    position_eval.promotion_piece = 10;
+                    position_eval.promotion_bitboard = future_states.at(i).board.bitboards[10];
+                }
+
+                positions_analyzed++;
+
+                alpha = std::max(alpha, position_eval.eval);
+                if(alpha >= beta)
+                    return position_eval;
+            }
         }
         else {
             position_eval = {INT_MAX, 0, 0ULL};
 
+            std::vector<chess::search::BoardMove> future_states;
+
+            // Calculate all future states for this position
             for(u8 i = 0; i < 6; ++i)
             {
                 for(u8 j = 0; j < 64; ++j)
@@ -122,27 +154,53 @@ chess::search::Eval chess::search::minimax(const chess::board::Board &b, bool ma
                                     hypothetical_board.bitboards[4] |= (hypothetical_board.bitboards[0] & 0x00000000000000ffULL);
                                     hypothetical_board.bitboards[0] &= 0xffffffffffffff00ULL;
 
-                                    chess::search::Eval hypothetical_eval = chess::search::minimax(hypothetical_board, true, alpha, beta, depth-1);
+                                    chess::search::BoardMove future_state;
+                                    future_state.board = hypothetical_board;
+                                    future_state.piece_to_move = i;
+                                    future_states.push_back(future_state);
 
-                                    if(hypothetical_eval.eval < position_eval.eval)
-                                    {
-                                        position_eval.eval = hypothetical_eval.eval;
-                                        position_eval.new_bitboard = hypothetical_board.bitboards[i];
-                                        position_eval.piece_to_move = i;
-                                        position_eval.promotion_piece = 4;
-                                        position_eval.promotion_bitboard = hypothetical_board.bitboards[4];
-                                    }
+                                    // chess::search::Eval hypothetical_eval = chess::search::minimax(hypothetical_board, true, alpha, beta, depth-1);
 
-                                    positions_analyzed++;
+                                    // if(hypothetical_eval.eval < position_eval.eval)
+                                    // {
+                                    //     position_eval.eval = hypothetical_eval.eval;
+                                    //     position_eval.new_bitboard = hypothetical_board.bitboards[i];
+                                    //     position_eval.piece_to_move = i;
+                                    //     position_eval.promotion_piece = 4;
+                                    //     position_eval.promotion_bitboard = hypothetical_board.bitboards[4];
+                                    // }
 
-                                    beta = std::min(beta, position_eval.eval);
-                                    if(alpha >= beta)
-                                        return position_eval;
+                                    // positions_analyzed++;
+
+                                    // beta = std::min(beta, position_eval.eval);
+                                    // if(alpha >= beta)
+                                    //     return position_eval;
                                 }
                             }
                         }
                     }
                 }
+            }
+
+            // Iterate over all futue states
+            for(int i = 0; i < future_states.size(); i++)
+            {
+                chess::search::Eval hypothetical_eval = chess::search::minimax(future_states.at(i).board, true, alpha, beta, depth-1);
+
+                if(hypothetical_eval.eval < position_eval.eval)
+                {
+                    position_eval.eval = hypothetical_eval.eval;
+                    position_eval.new_bitboard = future_states.at(i).board.bitboards[future_states.at(i).piece_to_move];
+                    position_eval.piece_to_move = future_states.at(i).piece_to_move;
+                    position_eval.promotion_piece = 4;
+                    position_eval.promotion_bitboard = future_states.at(i).board.bitboards[4];
+                }
+
+                positions_analyzed++;
+
+                beta = std::min(beta, position_eval.eval);
+                if(alpha >= beta)
+                    return position_eval;
             }
         }
 
