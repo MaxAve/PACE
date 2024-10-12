@@ -27,6 +27,10 @@ namespace chess
             chess::board::Board board; // New position
             u8 piece_to_move; // The piece that was moved
         } BoardMove;
+
+        bool compare_greater_board(const BoardMove &a, const BoardMove &b);
+
+        bool compare_lesser_board(const BoardMove &a, const BoardMove &b);
         
         extern u64 positions_analyzed; // Counter for debugging
 

@@ -179,11 +179,7 @@ int main(int argc, char** argv)
     Board board = fen_to_board("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
     chess::zobrist::init_zobrist_keys();
 
-    //NOTE Average think time with no opt:                          0.022 (last moves 48/49 with K6677)
-    //NOTE Average think time with no opt + vector:                 0.023 (last moves 48/49 with K6677)
-    //NOTE Average think time with no opt + vector + post-analysis: 0.027 (last moves 48/49 with K6677)
-
-    cpu_vs_cpu(board, 4); // Start a game with the engine playing against itself
+    player_vs_cpu(board, 7); // Start a game with the engine playing against itself
 
     return 0;
 }
