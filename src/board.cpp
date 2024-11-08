@@ -23,6 +23,35 @@ u64 chess::board::zobrist_hash(const chess::board::Board &b)
     return hash;
 }
 
+void chess::board::promote_pawns(chess::board::Board &b, u8 piece)
+{
+	b.bitboards[piece] |= (b.bitboards[PAWN] & 0xff000000000000ff);
+	b.bitboards[PAWN] &= 0x00ffffffffffff00;
+	b.bitboards[piece + 6] |= (b.bitboards[PAWN + 6] & 0xff000000000000ff);
+	b.bitboards[PAWN + 6] &= 0x00ffffffffffff00;
+}
+
+void chess::board::print_bb(const u64 &bb)
+{
+    for(char i = 63; i >= 0; --i)
+    {
+	bool piece = false;
+        for(u8 j = 0; j < 12; ++j)
+        {
+            if(bb & (1ULL << i))
+	    {
+                std::cout << "1 ";
+		piece = true;
+            	break;
+	    }
+	}
+	if(!piece)
+	    std::cout << "0 ";
+        if((i) % 8 == 0)
+	    std::cout << "\n";
+    }
+}
+
 void chess::board::print_board(chess::board::Board board, bool display_flags, u64 mask)
 {
     std::string piece_chars = "PNBRQKPNBRQK";

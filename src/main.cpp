@@ -48,12 +48,26 @@ void player_vs_cpu(Board &b, u8 depth)
             b.bitboards[i] &= ~(1ULL << to_pos); // Capture any pieces on the target square
         b.bitboards[piece_to_move] &= ~(1ULL << from_pos);
         b.bitboards[piece_to_move] |= (1ULL << to_pos);
+	chess::board::promote_pawns(b, QUEEN);
+
+	if(b.bitboards[KB] == 0)
+	{
+		std::cout << "GAME OVER\nWHITE WINS!\n";
+		break;
+	}
+	else if(b.bitboards[KW] == 0)
+	{
+		std::cout << "GAME OVER\nBLACK WINS!\n";
+		break;
+	}
 
         if(clear_screen)
             system("clear");
 
         u64 change = (b.bitboards[piece_to_move] & ~pre_move_board) | (pre_move_board & ~b.bitboards[piece_to_move]);
         gui::display(b, change);
+
+	chess::board::print_bb(b.bitboards[KB]);
 
         positions_analyzed = 0; // Set counter for positions analyzed to 0
         Eval evaluation = minimax(b, false, INT_MIN, INT_MAX, depth); // Evaluate the position and find the best move
@@ -62,7 +76,19 @@ void player_vs_cpu(Board &b, u8 depth)
         for(int i = 0; i < 12; ++i)
             b.bitboards[i] &= ~evaluation.new_bitboard; // Capture any pieces on the target square
         b.bitboards[evaluation.piece_to_move] = evaluation.new_bitboard; // Move piece
-        b.bitboards[evaluation.promotion_piece] = evaluation.promotion_bitboard; // Promotion (if a pawn reaches the opposite end of board)
+        //b.bitboards[evaluation.promotion_piece] = evaluation.promotion_bitboard; // Promotion (if a pawn reaches the opposite end of board)
+	chess::board::promote_pawns(b, QUEEN);
+	
+	if(b.bitboards[KB] == 0)
+	{
+		std::cout << "GAME OVER\nWHITE WINS!\n";
+		break;
+	}
+	else if(b.bitboards[KW] == 0)
+	{
+		std::cout << "GAME OVER\nBLACK WINS!\n";
+		break;
+	}
 
         if(clear_screen)
             system("clear");
@@ -80,14 +106,17 @@ void player_vs_cpu(Board &b, u8 depth)
     }
 }
 
-void cpu_vs_cpu(Board &b, u8 depth)
+void cpu_vs_cpu(Board &b, u8 depth, bool display=true)
 {
     std::vector<float> think_times;
 
     if(clear_screen)
         system("clear");
-    gui::display(b);//print_board(b, true); // Print board
-    std::cout << "\nPosition evaluation: -\nPositions analyzed: -\n";
+    if(display)
+        gui::display(b);//print_board(b, true); // Print board
+    //std::cout << "\nPosition evaluation: -\nPositions analyzed: -\n";
+
+    int moves = 0;
 
     while(b.bitboards[KW] && b.bitboards[KB])
     {
@@ -111,13 +140,15 @@ void cpu_vs_cpu(Board &b, u8 depth)
             b.bitboards[i] &= ~evaluation.new_bitboard; // Capture any pieces on the target square
         b.bitboards[evaluation.piece_to_move] = evaluation.new_bitboard; // Move piece
         b.bitboards[evaluation.promotion_piece] = evaluation.promotion_bitboard; // Promotion (if a pawn reaches the opposite end of board)
-
-        chess::search::position_history[chess::board::zobrist_hash(b)]++; // Add to move history
+	chess::board::promote_pawns(b, QUEEN);
+        
+	chess::search::position_history[chess::board::zobrist_hash(b)]++; // Add to move history
 
         if(clear_screen)
             system("clear");
 
-        gui::display(b, change);//print_board(b, true/*, chess::moves::get_attack_bitboard(5, WHITE_PIECE_BB(b), BLACK_PIECE_BB(b), WHITE_PIECE_BB(b) | BLACK_PIECE_BB(b), 0)*/); // Print board
+        if(display)
+            gui::display(b, change);//print_board(b, true/*, chess::moves::get_attack_bitboard(5, WHITE_PIECE_BB(b), BLACK_PIECE_BB(b), WHITE_PIECE_BB(b) | BLACK_PIECE_BB(b), 0)*/); // Print board
         b.flags ^= (1ULL << 4); // Switch turns
 
         //std::cout << "Position hash: " << chess::board::zobrist_hash(b) << "\n";
@@ -140,7 +171,7 @@ void cpu_vs_cpu(Board &b, u8 depth)
 
         if(chess::eval::is_draw(b, chess::search::position_history, WHITE_PIECE_BB(b), BLACK_PIECE_BB(b)))
         {
-            std::cout << "\nDRAW!\n";
+            //std::cout << "\nDRAW!\n";
             break;
         }
 
@@ -155,7 +186,7 @@ void cpu_vs_cpu(Board &b, u8 depth)
         // }
     }
 
-    float sum = 0;
+    /*float sum = 0;
     float min_ = 69420.0;
     float max_ = -696429.0;
     std::cout << "Move\tThink time (s)\n";
@@ -171,15 +202,23 @@ void cpu_vs_cpu(Board &b, u8 depth)
     float avg = sum / (float)think_times.size();
     std::cout << "Average: " << avg << "\n";
     std::cout << "Max: " << max_ << "\n";
-    std::cout << "Min: " << min_ << "\n";
+    std::cout << "Min: " << min_ << "\n";*/
 }
 
 int main(int argc, char** argv)
 {
+    // TODO stop game when king == 0
     Board board = fen_to_board("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
+    //Board board = fen_to_board("8/8/6P1/k1K5/8/8/8/8 w KQkq - 0 1");
     chess::zobrist::init_zobrist_keys();
 
-    player_vs_cpu(board, 7); // Start a game with the engine playing against itself
+    //auto think_time_start = std::chrono::high_resolution_clock::now();
 
+    //player_vs_cpu(board, 4);
+    cpu_vs_cpu(board, 2, true);
+    
+    //auto think_time_end = std::chrono::high_resolution_clock::now();
+    //auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(think_time_end - think_time_start);
+    //std::cout << (float)duration.count() / 1000.0 << "\n";
     return 0;
 }

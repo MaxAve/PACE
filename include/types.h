@@ -16,6 +16,12 @@
 #define QW 10
 #define KW 11
 #define EMPTY_SQUARE 12
+#define PAWN PB
+#define KNIGHT NB
+#define BISHOP BB
+#define ROOK RB
+#define QUEEN QB
+#define KING KB 
 
 typedef unsigned char u8;
 typedef unsigned long long u64;
