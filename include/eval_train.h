@@ -7,6 +7,7 @@
 #include "eval.h"
 #include "moves.h"
 #include "uci.h"
+#include "gui.h"
 
 #define DRAW   0
 #define P1_WIN 1
@@ -19,11 +20,17 @@ namespace trainer
 typedef struct
 {
     int score;
-    int pst[12][64];
+    int pst[6][64];
 } AgentScore;
 
-u8 play_game(AgentScore &p1, AgentScore &p2, int depth);
+bool compare_score(const AgentScore &a, const AgentScore &b);
 
-void train_pst(int generations, int agents_per_generation, int mutation_range, int calc_depth); /* Train piece-square tables */
+extern AgentScore current_games[2];
+
+int eval_pst(const board::Board &b);
+
+u8 play_game(chess::board::Board board, const AgentScore &p1, const AgentScore &p2, int depth);
+
+void train_pst(int generations, int agents_per_generation, int survivors, int mutation_range, int calc_depth); /* Train piece-square tables */
 } // namespace trainer
 } // namespace chess

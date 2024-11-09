@@ -73,6 +73,8 @@ namespace chess
         /* Evaluates position using piece square tables */
         int eval_pst(const board::Board &b);
 
+		int get_material_diff(const board::Board &board, int p=1, int n=3, int b=3, int r=5, int q=9, int k=999999999); /* Counts material difference */
+
         /* Checks for draws */
         bool is_draw(const board::Board &b, const std::unordered_map<u64, u8> &position_history, u64 white_pieces_bb, u64 black_pieces_bb);
     }

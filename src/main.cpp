@@ -11,6 +11,7 @@
 #include "../include/search.h"
 #include "../include/uci.h"
 #include "../include/gui.h"
+#include "../include/eval_train.h"
 
 using namespace chess;
 using namespace chess::board;
@@ -67,10 +68,10 @@ void player_vs_cpu(Board &b, u8 depth)
         u64 change = (b.bitboards[piece_to_move] & ~pre_move_board) | (pre_move_board & ~b.bitboards[piece_to_move]);
         gui::display(b, change);
 
-	chess::board::print_bb(b.bitboards[KB]);
+		chess::board::print_bb(b.bitboards[KB]);
 
         positions_analyzed = 0; // Set counter for positions analyzed to 0
-        Eval evaluation = minimax(b, false, INT_MIN, INT_MAX, depth); // Evaluate the position and find the best move
+        Eval evaluation = minimax(b, false, INT_MIN, INT_MAX, depth, chess::eval::eval_pst); // Evaluate the position and find the best move
 
         // Modify main board to reflect the move
         for(int i = 0; i < 12; ++i)
@@ -124,7 +125,7 @@ void cpu_vs_cpu(Board &b, u8 depth, bool display=true)
 
         positions_analyzed = 0; // Set counter for positions analyzed to 0
         //std::cout << "\nThinking...\n";
-        Eval evaluation = minimax(b, b.flags & (1ULL << 4), INT_MIN, INT_MAX, depth); // Evaluate the position and find the best move
+        Eval evaluation = minimax(b, b.flags & (1ULL << 4), INT_MIN, INT_MAX, depth, chess::eval::eval_pst); // Evaluate the position and find the best move
         //std::cout << "Done thinking!\n";
 
         auto think_time_end = std::chrono::high_resolution_clock::now();
@@ -207,18 +208,17 @@ void cpu_vs_cpu(Board &b, u8 depth, bool display=true)
 
 int main(int argc, char** argv)
 {
-    // TODO stop game when king == 0
+	srand(time(NULL));
     Board board = fen_to_board("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
-    //Board board = fen_to_board("8/8/6P1/k1K5/8/8/8/8 w KQkq - 0 1");
     chess::zobrist::init_zobrist_keys();
-
-    //auto think_time_start = std::chrono::high_resolution_clock::now();
-
-    //player_vs_cpu(board, 4);
-    cpu_vs_cpu(board, 2, true);
+    chess::trainer::train_pst(1, 6, 3, 10, 4);
     
+	//Board board = fen_to_board("8/8/6P1/k1K5/8/8/8/8 w KQkq - 0 1");
+    //auto think_time_start = std::chrono::high_resolution_clock::now();
+    //player_vs_cpu(board, 4);
+    //cpu_vs_cpu(board, 2, true);
     //auto think_time_end = std::chrono::high_resolution_clock::now();
     //auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(think_time_end - think_time_start);
     //std::cout << (float)duration.count() / 1000.0 << "\n";
-    return 0;
+	return 0;
 }

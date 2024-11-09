@@ -55,8 +55,9 @@ namespace chess
          * @param alpha alpha value used in alpha-beta pruning (set to INT_MIN)
          * @param beta beta value used in alpha-beta pruning (set to INT_MAX)
          * @param depth search depth
+		 * @param eval_callback callback function used for evaluating positions; must return 'int' and take a Board as input
          * @return Eval 
          */
-        Eval minimax(const board::Board &b, bool maximizing, int alpha, int beta, u8 depth);
+        Eval minimax(const board::Board &b, bool maximizing, int alpha, int beta, u8 depth, int(*eval_callback)(const chess::board::Board&));
     }
 }

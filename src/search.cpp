@@ -1,6 +1,6 @@
 #include "../include/search.h"
 
-chess::search::Eval chess::search::minimax(const chess::board::Board &b, bool maximizing, int alpha, int beta, u8 depth)
+chess::search::Eval chess::search::minimax(const chess::board::Board &b, bool maximizing, int alpha, int beta, u8 depth, int(*eval_callback)(const chess::board::Board&))
 {
     chess::search::Eval position_eval;
     
@@ -23,7 +23,7 @@ chess::search::Eval chess::search::minimax(const chess::board::Board &b, bool ma
         return position_eval;
     }
     else if(depth == 0) {
-        position_eval.eval = chess::eval::eval_pst(b); // TODO improve evaluation
+        position_eval.eval = eval_callback(b);//chess::eval::eval_pst(b); // TODO improve evaluation
         return position_eval;
     }
     else
@@ -62,7 +62,7 @@ chess::search::Eval chess::search::minimax(const chess::board::Board &b, bool ma
                                     hypothetical_board.bitboards[10] |= (hypothetical_board.bitboards[6] & 0xff00000000000000ULL);
                                     hypothetical_board.bitboards[6] &= 0x00ffffffffffffffULL;
 
-                                    chess::search::Eval hypothetical_eval = chess::search::minimax(hypothetical_board, false, alpha, beta, depth-1);
+                                    chess::search::Eval hypothetical_eval = chess::search::minimax(hypothetical_board, false, alpha, beta, depth-1, eval_callback);
 
                                     if(hypothetical_eval.eval > position_eval.eval)
                                     {
@@ -118,7 +118,7 @@ chess::search::Eval chess::search::minimax(const chess::board::Board &b, bool ma
                                     hypothetical_board.bitboards[4] |= (hypothetical_board.bitboards[0] & 0x00000000000000ffULL);
                                     hypothetical_board.bitboards[0] &= 0xffffffffffffff00ULL;
 
-                                    chess::search::Eval hypothetical_eval = chess::search::minimax(hypothetical_board, true, alpha, beta, depth-1);
+                                    chess::search::Eval hypothetical_eval = chess::search::minimax(hypothetical_board, true, alpha, beta, depth-1, eval_callback);
 
                                     if(hypothetical_eval.eval < position_eval.eval)
                                     {
