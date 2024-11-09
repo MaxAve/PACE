@@ -211,7 +211,7 @@ int main(int argc, char** argv)
 	srand(time(NULL));
     Board board = fen_to_board("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
     chess::zobrist::init_zobrist_keys();
-    chess::trainer::train_pst(1, 6, 3, 10, 4);
+    chess::trainer::train_pst(3, 7, 3, 10, 4);
     
 	//Board board = fen_to_board("8/8/6P1/k1K5/8/8/8/8 w KQkq - 0 1");
     //auto think_time_start = std::chrono::high_resolution_clock::now();

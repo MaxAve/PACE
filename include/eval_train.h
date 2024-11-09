@@ -29,6 +29,8 @@ extern AgentScore current_games[2];
 
 int eval_pst(const board::Board &b);
 
+AgentScore breed_agents(const AgentScore &a, const AgentScore &b, int mutation);
+
 u8 play_game(chess::board::Board board, const AgentScore &p1, const AgentScore &p2, int depth);
 
 void train_pst(int generations, int agents_per_generation, int survivors, int mutation_range, int calc_depth); /* Train piece-square tables */

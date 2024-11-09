@@ -33,6 +33,20 @@ int chess::trainer::eval_pst(const board::Board &b)
     return eval;
 }
 
+chess::trainer::AgentScore chess::trainer::breed_agents(const chess::trainer::AgentScore &a, const chess::trainer::AgentScore &b, int mutation)
+{
+	chess::trainer::AgentScore as;
+	as.score = 0;
+	for(int i = 0; i < 6; i++)
+	{
+		for(int j = 0; j < 64; j++)
+		{
+			as.pst[i][j] = (((rand()%2)==0) ? a.pst[i][j] : b.pst[i][j]) + ((rand() % (2*mutation)) - mutation);
+		}
+	}
+	return as;
+}
+
 u8 chess::trainer::play_game(chess::board::Board board, const AgentScore &p1, const AgentScore &p2, int depth)
 {
     int moves = 0;
@@ -164,19 +178,25 @@ void chess::trainer::train_pst(int generations, int agents_per_generation, int s
 			std::cout << "#" << i << ":\t" << agents.at(i).score << "\n";
 		}
 
-		
-    	std::vector<chess::trainer::AgentScore> best_agents;
 		std::sort(agents.begin(), agents.end(), chess::trainer::compare_score);
-		best_agents = agents;
-		for(int i = 0; i < best_agents.size() - survivors; i++)
+		for(int i = 0; i < agents.size() - survivors; i++)
 		{
-			best_agents.erase(best_agents.begin());
+			agents.erase(agents.begin());
+		}
+		std::cout << "\nSURVIVORS (" << agents.size() << ")\n";
+		for(int i = 0; i < agents.size(); i++)
+		{
+			std::cout << "#" << i << ":\t" << agents.at(i).score << "\n";
+			agents.at(i).score = 0;
 		}
 
-		std::cout << "\nSURVIVORS (" << best_agents.size() << ")\n";
-		for(int i = 0; i < best_agents.size(); i++)
+		// Breed
+    	std::vector<chess::trainer::AgentScore> best_agents = agents;
+		for(int i = 0; i < agents_per_generation - best_agents.size(); i++)
 		{
-			std::cout << "#" << i << ":\t" << best_agents.at(i).score << "\n";
+			agents.emplace_back(chess::trainer::breed_agents(best_agents.at(rand() % best_agents.size()), best_agents.at(rand() % best_agents.size()), mutation_range));
 		}
+
+		std::cout << "Created " << (agents_per_generation - best_agents.size()) << " agents (now " << agents.size() << ")\n";
     }
 }
